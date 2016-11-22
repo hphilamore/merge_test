@@ -62,26 +62,29 @@ b = a(1,:)
 
 %print(z)
 
-function dydt = sailboat(t,z)
+function dZdt = sailboat(t,Z)
 
 global p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 ...
     x y theta v w a_tw psi_tw delta_s delta_r Wc_aw Wp_aw gs gr 
 
-dydt = zeros(5,1);    % a column vector
-dydt(1) = v * cos(theta) + p1 * a_tw * cos(psi_tw);
-dydt(2) = v * sin(theta) + p1 * a_tw * sin(psi_tw);
-dydt(3) = w;
-dydt(4) = (gs * sin(delta_s) - gr * p11 * sin(delta_r) - p2 * v^2) / p9;
-dydt(5) = (gs * (p6 - p7 * cos(delta_s)) - gr * p8 * cos(delta_r) - p3 ...
-    * w * v) / p10;
+% dydt = zeros(5,1);    % a column vector
+% dydt(1) = v * cos(theta) + p1 * a_tw * cos(psi_tw);
+% dydt(2) = v * sin(theta) + p1 * a_tw * sin(psi_tw);
+% dydt(3) = w;
+% dydt(4) = (gs * sin(delta_s) - gr * p11 * sin(delta_r) - p2 * v^2) / p9;
+% dydt(5) = (gs * (p6 - p7 * cos(delta_s)) - gr * p8 * cos(delta_r) - p3 ...
+%     * w * v) / p10;
 
-dydt = zeros(5,1);    % a column vector
-dydt(1) = v * cos(theta) + p1 * a_tw * cos(psi_tw);
-dydt(2) = v * sin(theta) + p1 * a_tw * sin(psi_tw);
-dydt(3) = w;
-dydt(4) = (gs * sin(delta_s) - gr * p11 * sin(delta_r) - p2 * v^2) / p9;
-dydt(5) = (gs * (p6 - p7 * cos(delta_s)) - gr * p8 * cos(delta_r) - p3 ...
-    * w * v) / p10;
+dZdt = [ ...
+        Z(4) * cos(Z(3)) + p1 * a_tw * cos(psi_tw); ...
+        Z(4) * sin(Z(3)) + p1 * a_tw * sin(psi_tw); ...
+        Z(5); ...
+        (gs * sin(delta_s) - gr * p11 * sin(delta_r) - p2 * Z(4)^2) / p9; ...
+        (gs * (p6 - p7 * cos(delta_s)) - gr * p8 * cos(delta_r) - p3 ...
+            * Z(5) * Z(4)) / p10; ...
+        ]
+
+
 
 % function dy = elastic(t,y)
 % dy = zeros(3,1);    % a column vector
