@@ -30,6 +30,7 @@ w = 1
 % input parameters
 a_tw = 10
 psi_tw = 100
+
 delta_s = 1                                         %% todo 
 delta_r = 1                                         %% todo
 
@@ -50,15 +51,29 @@ gr = 1                                              %% todo
 %[t,y] = ode45(@(t,y) elastic(t,y), [0 12],[0 1 1]);      % to run internal function 
 %[t,y] = ode45('rigid',[0 12],[0 1 1]);                   % to run external function without additional arguments
 
-[t,y] = ode45(@(t,y) sailboat(t,y), tspan, [x y theta v w]);
+%[t,z] = ode45(@(t,z) sailboat(t,z), tspan, [x y theta v w]);
+sol = ode45(@sailboat, tspan, [x y theta v w]);
 
-plot(t,y(:,1),'r-o',t,y(:,2),'g-d', ...
-    t,y(:,3),'b-s',t,y(:,4),'m-^',t,y(:,5),'k-*')
+plot(sol.x,sol.y);
+a = sol.y
+b = a(1,:)
+% plot(t,z(:,1),'r-o',t,z(:,2),'g-d', ...
+%     t,z(:,3),'b-s',t,z(:,4),'m-^',t,z(:,5),'k-*')
 
-function dydt = sailboat(t,y)
+%print(z)
+
+function dydt = sailboat(t,z)
 
 global p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 ...
     x y theta v w a_tw psi_tw delta_s delta_r Wc_aw Wp_aw gs gr 
+
+dydt = zeros(5,1);    % a column vector
+dydt(1) = v * cos(theta) + p1 * a_tw * cos(psi_tw);
+dydt(2) = v * sin(theta) + p1 * a_tw * sin(psi_tw);
+dydt(3) = w;
+dydt(4) = (gs * sin(delta_s) - gr * p11 * sin(delta_r) - p2 * v^2) / p9;
+dydt(5) = (gs * (p6 - p7 * cos(delta_s)) - gr * p8 * cos(delta_r) - p3 ...
+    * w * v) / p10;
 
 dydt = zeros(5,1);    % a column vector
 dydt(1) = v * cos(theta) + p1 * a_tw * cos(psi_tw);
