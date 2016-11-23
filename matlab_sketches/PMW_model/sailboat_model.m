@@ -23,7 +23,7 @@ tspan = [0 1];
 % intial conditions
 x = 0
 y = 0
-theta = pi/4 
+theta = pi/4
 v = 0
 w = 0
 
@@ -31,12 +31,12 @@ Z_init = [x y theta v w]
 
 % input parameters
 % wind
-a_tw = 0
-psi_tw = pi * 3/4
+a_tw = 10
+psi_tw = pi * 0.8
 
 % rudder and sail angle
-delta_s = pi/4                                         
-delta_r = -pi/4                                        
+delta_s = 0 %0.2                                         
+delta_r = 0                                       
 
 % computed parameters
 %actual wind
@@ -56,7 +56,7 @@ gr = -sign(psi_aw) * min(abs(pi - abs(psi_aw)), abs(delta_s))
 figure(1)
 figure(2)
 
-for j = 1:15
+for j = 1:7
 
     [t,z] = ode45(@(t,Z) sailboat(t,Z), tspan, Z_init);
 
@@ -77,7 +77,7 @@ for j = 1:15
     end
     
     figure(2)    
-    DrawRectangle([Z_init(1), Z_init(2), 1.2, 1.5, Z_init(3), 1.2, ...
+    DrawRectangle([Z_init(1), Z_init(2), 1.8, 1.2, Z_init(3), 1.2, ...
                    delta_s, a_tw, psi_tw], 'r-'); 
     plot(Z_init(1), Z_init(2),'b')
     hold on
