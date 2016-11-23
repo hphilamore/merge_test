@@ -35,7 +35,7 @@ a_tw = 10
 psi_tw = pi * 0.8
 
 % rudder and sail angle
-delta_s = 0 %0.2                                         
+delta_s = 0.2                                         
 delta_r = 0                                       
 
 % computed parameters
