@@ -32,10 +32,10 @@ Z_init = [x y theta v w]
 % input parameters
 % wind
 a_tw = 10
-psi_tw = pi * 0.8
+psi_tw = pi * 1.6
 
 % rudder and sail angle
-delta_s = 0.2                                         
+delta_s = -0.2                                         
 delta_r = 0                                       
 
 % computed parameters
@@ -56,7 +56,7 @@ gr = -sign(psi_aw) * min(abs(pi - abs(psi_aw)), abs(delta_s))
 figure(1)
 figure(2)
 
-for j = 1:7
+for j = 1:15
 
     [t,z] = ode45(@(t,Z) sailboat(t,Z), tspan, Z_init);
 
@@ -200,8 +200,10 @@ S = [a, a + l * cos(theta + delta_s - pi); ...
      b, b + l * sin(theta + delta_s - pi)];
 f = plot(S(1,:),S(2,:),'b');
 
-W = [a + a_tw * cos(psi_tw), -a_tw * cos(psi_tw); ...
-     b + a_tw * sin(psi_tw), -a_tw * sin(psi_tw)];
+% W = [a + a_tw * cos(psi_tw), -a_tw * cos(psi_tw); ...
+%      b + a_tw * sin(psi_tw), -a_tw * sin(psi_tw)];
+W = [a - a_tw * cos(psi_tw), a_tw * cos(psi_tw); ...
+     b - a_tw * sin(psi_tw), a_tw * sin(psi_tw)];
 g = quiver(W(1,1),W(2,1),W(1,2),W(2,2),'g');
 axis equal;
 
