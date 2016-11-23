@@ -13,38 +13,45 @@ p5 = 1500
 p6 = 0.5
 p7 = 0.5
 p8 = 2
-p9 = 300
+p9 = 120
 p10 = 400
 p11 = 0.2
 
 % time 
-tspan = [0 1];
+tspan = [0 20];
 
 % intial conditions
 x = 1
 y = 1
 theta = pi/4 
 v = 50
-w = 5
+w = 10
 
 Z_init = [x y theta v w]
 
 % input parameters
+% wind
 a_tw = 10
 psi_tw = 100
 
-delta_s = 1                                         %% todo 
-delta_r = 1                                         %% todo
+% rudder and sail angle
+delta_s = 100                                         
+delta_r = 100                                         
 
 % computed parameters
-Wc_aw = [(a_tw * cos(psi_tw - theta) - v) ...
-         (a_tw * cos(psi_tw - theta) - v)]
+%actual wind
+Wc_aw = [(a_tw * cos(psi_tw - theta) - v); ...
+         (a_tw * sin(psi_tw - theta))]
 
-Wp_aw = [abs(Wc_aw) ...
-         atan(Wc_aw)]
+Wp_aw = [hypot(Wc_aw(2,:), Wc_aw(1,:)); ...
+         atan2(Wc_aw(2,:), Wc_aw(1,:))]  
+     
+a_aw = Wp_aw(1,:);
+psi_aw = Wp_aw(2,:);
 
-gs = 1                                              %% todo
-gr = 1                                              %% todo
+% force on sail and rudder     
+gs = -p4 * a_aw * sin(delta_s - psi_aw)     
+gr = -sign(psi_aw) * min(abs(pi - abs(psi_aw)), abs(delta_s)) 
 
 % examples
 % A = 1;
@@ -67,47 +74,28 @@ gr = 1                                              %% todo
 plot(t,z(:,1),'r-o',t,z(:,2),'g-d', ...
     t,z(:,3),'b-s',t,z(:,4),'m-^',t,z(:,5),'k-*')
 
-% a = z
-% b = z(:,1)
-% b(end)
 for i=1:5
     Z_init(i) = z(end,i);
 end
     
-
-x = z(end,1)
-% x = x(end)
-% y = z(:,2)
-% x = x(end)
-% x = z(:,3)
-% x = x(end)
-% x = z(:,4)
-% x = x(end)
-% x = z(:,5)
-% x = x(end)
-
-% y = 
-% theta = 
-% v = 
-% w = 
-
-
-
-
-
 function dZdt = sailboat(t,Z)
 
 global p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 ...
        a_tw psi_tw delta_s delta_r Wc_aw Wp_aw gs gr % x y theta v w
 
 dZdt = [ ...
+        % x
         Z(4) * cos(Z(3)) + p1 * a_tw * cos(psi_tw); ...
+        % y
         Z(4) * sin(Z(3)) + p1 * a_tw * sin(psi_tw); ...
+        % theta
         Z(5); ...
+        % v
         (gs * sin(delta_s) - gr * p11 * sin(delta_r) - p2 * Z(4)^2) / p9; ...
+        % w
         (gs * (p6 - p7 * cos(delta_s)) - gr * p8 * cos(delta_r) - p3 ...
             * Z(5) * Z(4)) / p10; ...
-        ]
+        ];
 
 % function dy = elastic(t,y)
 % dy = zeros(3,1);    % a column vector
