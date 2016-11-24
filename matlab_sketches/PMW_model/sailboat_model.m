@@ -3,7 +3,7 @@ function main
 
 global p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 ...
        a_tw psi_tw delta_s delta_r Wc_aw Wp_aw gs gr ...
-       A_sail A_rudder rho_air K_s K_r F_s F_r % x y theta v w
+       F_s F_r 
 
 % model 
 p1 = 0.03;
@@ -17,12 +17,14 @@ p8 = 2;
 p9 = 120;
 p10 = 400;
 p11 = 0.2;
-
-A_sail = 0.25;
-A_rudder = 0.05;
-rho_air = 1.225;
-K_s = 0.5 * rho_air * A_sail;
-K_r = 0.5 * rho_air * A_rudder; 
+% plane area
+A_s = 0.25;
+A_r = 0.05;
+% lift and drag coefficients: function of angle of attack
+Cl_s = 1;
+Cd_s = 0.1;
+Cl_r = 1;
+Cd_r = 0.1;
 
 % time 
 tspan = [0 1];
@@ -33,10 +35,8 @@ y = 0
 theta = pi/4
 v = 0
 w = 0
-
 Z_init = [x y theta v w]
 
-% input parameters
 % wind
 a_tw = 10
 psi_tw = pi * 1.6
@@ -45,41 +45,21 @@ psi_tw = pi * 1.6
 delta_s = -0.2                                         
 delta_r = 0                                       
 
-% computed parameters
-%actual wind
-Wc_aw = [(a_tw * cos(psi_tw - theta) - v); ...
-         (a_tw * sin(psi_tw - theta))]
+% apparent wind
+Wc_aw = appWind_c(a_tw, psi_tw, theta, v)
+[Wp_aw, a_aw, psi_aw] = appWind_p(Wc_aw)
 
-Wp_aw = [hypot(Wc_aw(2,:), Wc_aw(1,:)); ...
-         atan2(Wc_aw(2,:), Wc_aw(1,:))]  
-     
-a_aw = Wp_aw(1,:);
-psi_aw = Wp_aw(2,:);
+L_s = aero_force(A_s, a_aw, Cl_s)
+D_s = aero_force(A_s, a_aw, Cd_s)
+L_r = hydro_force(A_r, v, Cl_r)
+D_r = hydro_force(A_r, v, Cd_r);
 
-% force on sail and rudder     
-% gs = -p4 * a_aw * sin(delta_s - psi_aw) 
-% gr = -sign(psi_aw) * min(abs(pi - abs(psi_aw)), abs(delta_s)) 
-
-% lift and drag coefficients: function of angle of attack
-Cl_s = 1;
-Cd_s = 0.1;
-Cl_r = 1;
-Cd_r = 0.1;
-
-L_s = K_s * a_aw * Cl_s;
-D_s = K_s * a_aw * Cd_s;
-L_r = K_r * v^2 * Cl_r;
-D_r = K_r * v^2 * Cd_r;
+F_s = sumAeroVectors(L_s,D_s)  
+F_r = sumAeroVectors(L_r,D_r) 
 
 gs = -p4 * a_aw * sin(delta_s - psi_aw)     
 gr = -p5 * v^2 * sin(delta_r)
-%gr = -sign(psi_aw) * min(abs(pi - abs(psi_aw)), abs(delta_s));
-
-F_s = [-hypot(L_s, D_s); ...
-       atan2(L_s, D_s)]  
-
-F_r = [-hypot(L_r, D_r); ...
-       atan2(L_r, D_r)];    
+%gr = -sign(psi_aw) * min(abs(pi - abs(psi_aw)), abs(delta_s));    
 
 figure(1)
 figure(2)
@@ -92,17 +72,19 @@ for j = 1:15
     plot(t,z(:,1),'r',t,z(:,2),'g', ...
        t,z(:,3),'b',t,z(:,4),'m',t,z(:,5),'k')
     hold on
-
-%     figure(2)
-%    
-%     plot(t,z(:,1),'r',t,z(:,2),'g', ...
-%         t,z(:,3),'b',t,z(:,4),'m',t,z(:,5),'k')
-%     hold on
     
+
+%     for i=1:5
+%         Z_init(i) = z(end,i);
+%     end    
+
     % update initial conditions for next iteration: x y theta v w
-    for i=1:5
-        Z_init(i) = z(end,i);
-    end
+    x = z(end,1);
+    y = z(end,2);
+    theta = z(end,3);
+    v = z(end,4);
+    w = z(end,5);
+    Z_init = [x y theta v w]
     
     figure(2) 
     DrawRectangle([Z_init(1), Z_init(2), 1.8, 1.2, Z_init(3), 1.2, ...
@@ -116,12 +98,12 @@ for j = 1:15
     % CONTROLLER                    % todo!
     % update sail and rudder angle
     %delta_s = abs(delta_s) + 0.05
-    %delta_r = abs(delta_r) + 0.1
-    
+    %delta_r = abs(delta_r) + 0.1    
     
     % update wind angle and magnitude    
     a_tw = abs(a_tw) + 1;
     psi_tw = abs(psi_tw);   
+    
 %     if (j > 9)
 %         %psi_tw = -1 * psi_tw
 %         delta_s = 0
@@ -130,28 +112,21 @@ for j = 1:15
 
     
     % re-compute parameters
-    Wc_aw = [(a_tw * cos(psi_tw - theta) - v); ...
-         (a_tw * sin(psi_tw - theta))];
+    % apparent wind
+    Wc_aw = appWind_c(a_tw, psi_tw, theta, v)
+    [Wp_aw, a_aw, psi_aw] = appWind_p(Wc_aw)
 
-    Wp_aw = [hypot(Wc_aw(2,:), Wc_aw(1,:)); ...
-         atan2(Wc_aw(2,:), Wc_aw(1,:))]; 
-     
-    a_aw = Wp_aw(1,:);    
-    psi_aw = Wp_aw(2,:); 
-    
-    L_s = K_s * a_aw * Cl_s;
-    D_s = K_s * a_aw * Cd_s;
-    L_r = K_r * Z_init(4)^2 * Cl_r;
-    D_r = K_r * Z_init(4)^2 * Cd_r;
+    L_s = aero_force(A_s, a_aw, Cl_s)
+    D_s = aero_force(A_s, a_aw, Cd_s)
+    L_r = hydro_force(A_r, v, Cl_r)
+    D_r = hydro_force(A_r, v, Cd_r);
+
+    F_s = sumAeroVectors(L_s,D_s)  
+    F_r = sumAeroVectors(L_r,D_r) 
 
     gs = -p4 * a_aw * sin(delta_s - psi_aw)     
-    gr = -p5 * Z_init(4)^2 * sin(delta_r)
-
-    F_s = [-hypot(L_s, D_s); ...
-           atan2(L_s, D_s)]  
-
-    F_r = [-hypot(L_r, D_r); ...
-           atan2(L_r, D_r)];
+    gr = -p5 * v^2 * sin(delta_r)
+    %gr = -sign(psi_aw) * min(abs(pi - abs(psi_aw)), abs(delta_s));    
    
 end
 
@@ -162,7 +137,7 @@ function dZdt = sailboat(t,Z)
 
 global p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 ...
        a_tw psi_tw delta_s delta_r Wc_aw Wp_aw gs gr ...
-       A_sail A_rudder rho_air K_s K_r F_s F_r; % x y theta v w
+       F_s F_r; 
 
 dZdt = [ ...
         % x
@@ -179,7 +154,7 @@ dZdt = [ ...
 %           * Z(5) * Z(4)) / p10; ...
         ( -F_s(1,:) * sin(F_s(2,:)) * (p6 - p7 * cos(delta_s))) ...
         - (-F_r(1,:) * sin(F_r(2,:)) * p8 * cos(delta_r)) / p10; ...
-        ];
+        ];       
     
 function h = DrawRectangle(param,style)
 %--------------------------------------------------------------------------
@@ -201,12 +176,7 @@ function h = DrawRectangle(param,style)
 %   DrawRectangle([0 0 1 1 0]); 
 %   DrawRectangle([-1,2,3,5,3.1415/6],'r-');
 %   h = DrawRectangle([0,1,2,4,3.1415/3],'--');
-%
-%   Rasoul Mojtahedzadeh (mojtahedzadeh _a_ gmail com)
-%   Version 1.00
-%   November, 2011
 %--------------------------------------------------------------------------
-
 if (nargin <1),
     error('Please see help for INPUT DATA.');
 elseif (nargin==1)
@@ -250,23 +220,83 @@ g = quiver(W(1,1),W(2,1),W(1,2),W(2,2),'g');
 axis equal;
 
 
-% convert variable name to string
-% source: http://stackoverflow.com/questions/11453165/matlab-get-string-containing-variable-name
-% function out = varname(var)
-%   out = inputname(1);
-%   
-% function out = legend_from_array(vals)
-%       len = length(vals)
-%       legendCell = [zeros(1,len)]
-%       for j = 1:len
-%           legendCell(j) %= inputname(vals(j))
-%           vals(j)
-%           inputname(vals(j))
-%       end          
+function out = appWind_c(a_tw, psi_tw, theta, v)
+%--------------------------------------------------------------------------
+% Uses polar components of true wind to compute cartesian components of 
+% apparent wind:
+% - inputs:
+%          a_tw : magnitude of true wind velocity
+%          psi_tw : true wind angle relative to north-east-up frame
+%          theta : heading angle relative to north-east-up frame
+%          v : PMW velocity in direction of heading 
+% - output:
+%          out....................... 2x1 array
+%          out : cartesian components of apparent wind
+%--------------------------------------------------------------------------
+out = [(a_tw * cos(psi_tw - theta) - v); ...
+       (a_tw * sin(psi_tw - theta))]
+   
+function [out1, out2, out3] = appWind_p(Wc_aw)
+%--------------------------------------------------------------------------
+% Uses cartesian components of apparent wind to compute polar components: 
+% - inputs:
+%          Wc_aw....................... 2x1 array
+%          Wc_aw : cartesian components of apparent wind
+% - output:
+%          out1....................... 2x1 array
+%          out1 : polar components of apparent wind [mag; angle]
+%          out2 : magnitude of apparent wind velocity 
+%          out3 : apparent wind angle relative to north-east-up frame 
+%--------------------------------------------------------------------------
+out1 = [hypot(Wc_aw(2,:), Wc_aw(1,:)); ...
+       atan2(Wc_aw(2,:), Wc_aw(1,:))];
 
-% function out = varname(var)
-%   out = inputname(1);
+out2 = out1(1,:);
+
+out3 = out1(2,:);
+
+function out = aero_force(A_plane, v_fluid, C)
+%--------------------------------------------------------------------------
+% Lift or drag force, square of velocity neglected due to roll of body
+% - inputs:
+%          A_plane : plane area of sail or wing
+%          v_fluid : fluid velocity
+%          C : lift or drag coefficent
+% - output:
+%          out : force (N)
+%--------------------------------------------------------------------------
+rho_air = 1.225;
+out = 0.5 * rho_air * A_plane * v_fluid^2 * C 
+
+function out = hydro_force(A_plane, v_fluid, C)
+%--------------------------------------------------------------------------
+% Lift or drag force
+% - inputs:
+%          A_plane : plane area of sail or wing
+%          v_fluid : fluid velocity
+%          C : lift or drag coefficent
+% - output:
+%          out : force (N)
+%--------------------------------------------------------------------------
+rho_air = 1.225;
+out = 0.5 * rho_air * A_plane * v_fluid^2 * C
+
+function out = sumAeroVectors(lift,drag)
+%--------------------------------------------------------------------------
+% Find the resultant of perpendicular lift or drag forces as polar
+% components.
+% - inputs:
+%          lift : plane area of sail or wing
+%          drag : fluid velocity
+% - output:
+%          out....................... 2x1 array
+%          out : Polar components of resultant force [mag; angle]
+%--------------------------------------------------------------------------
+out = [-hypot(lift, drag); ...
+        atan2(lift, drag)]  
 
 
 
-
+       
+       
+   
