@@ -50,8 +50,23 @@ a_aw = Wp_aw(1,:);
 psi_aw = Wp_aw(2,:);
 
 % force on sail and rudder     
+% gs = -p4 * a_aw * sin(delta_s - psi_aw)     
+% gr = -sign(psi_aw) * min(abs(pi - abs(psi_aw)), abs(delta_s)) 
 gs = -p4 * a_aw * sin(delta_s - psi_aw)     
 gr = -sign(psi_aw) * min(abs(pi - abs(psi_aw)), abs(delta_s)) 
+
+% sail lift coefficient
+% sail drag coefficient
+% rudder lift coefficient
+% rudder drag coefficient
+
+% sail lift
+% sail drag
+% rudder lift
+% rudder drag
+
+% gs (2x1) matrix
+% gr (2x1 matrix)
 
 figure(1)
 figure(2)
@@ -117,8 +132,6 @@ end
 
 figure(1)
 legend('x', 'y', 'theta', 'v', 'w')
-
-
 
 function dZdt = sailboat(t,Z)
 
