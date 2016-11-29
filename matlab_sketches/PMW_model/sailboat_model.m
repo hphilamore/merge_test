@@ -61,8 +61,16 @@ D_r = hydro_force(A_r, [v;0], delta_r, kr, 'drag')
 F_s = sumAeroVectors(L_s, D_s)  
 F_r = sumAeroVectors(L_r, D_r)
 
-alpha = pi - abs(psi_aw) - abs(delta_s)
-alpha = pi - abs(psi_aw) + (abs(delta_s)^2 * psi_aw) / (delta_s * abs(psi_aw))
+alpha = pi - abs(psi_aw) - abs(delta_s);
+alpha = pi - abs(psi_aw) + (abs(delta_s)^2 * psi_aw) / (delta_s * abs(psi_aw));
+delta_s
+psi_aw
+alpha = pi + ...
+        ((abs(psi_aw) - abs(delta_s)) * ...
+        abs(delta_s)^2 * ...
+        psi_aw / ...
+        (delta_s * abs(psi_aw)) ...
+        )
 gs = p4 * a_aw * sin(alpha)
 alpha = -delta_r;
 gr = p5 * v^2 * sin(alpha);
@@ -76,7 +84,7 @@ DrawRectangle([Z_init(1), Z_init(2), 1.8, 1.2, Z_init(3), 1.2, ...
 %plot(Z_init(1), Z_init(2),'b')
 hold on
 
-for j = 1:2
+for j = 1:10
 
     [t,z] = ode45(@(t,Z) sailboat(t,Z), tspan, Z_init);
 
@@ -131,8 +139,15 @@ for j = 1:2
     F_s = sumAeroVectors(L_s, D_s)  
     F_r = sumAeroVectors(L_r, D_r) 
     
-    alpha = pi - abs(psi_aw) - abs(delta_s)
-    alpha = pi - abs(psi_aw) + (abs(delta_s)^2 * psi_aw) / (delta_s * abs(psi_aw))
+    alpha = pi - abs(psi_aw) - abs(delta_s);
+    alpha = pi - abs(psi_aw) + (abs(delta_s)^2 * psi_aw) / (delta_s * abs(psi_aw));
+    alpha = pi + ...
+            (abs(psi_aw) * ...
+            abs(delta_s)^2 * ...
+            psi_aw / ...
+            (delta_s * abs(psi_aw)) ...
+            ) - ...
+            abs(delta_s)
     gs = p4 * a_aw * sin(alpha)
     alpha = -delta_r;
     gr = p5 * v^2 * sin(alpha);
@@ -280,12 +295,19 @@ function out = aero_force(A_plane, v_fluid, delta, k, force)
 %          out....................... 2x1 array
 %          out : magnitude and direction of force relative to PMW
 %--------------------------------------------------------------------------
-global rho_air 
+global rho_air delta_s psi_aw a_aw
 a_aw = v_fluid(1,:);
 psi_aw = v_fluid(2,:);
 k1 = k / A_plane;
 alpha = psi_aw - delta;
-alpha = pi - abs(psi_aw) + (abs(delta)^2 * psi_aw) / (delta * abs(psi_aw))
+alpha = pi - abs(psi_aw) + (abs(delta_s)^2 * psi_aw) / (delta_s * abs(psi_aw));
+alpha = pi + ...
+        (abs(psi_aw) * ...
+        abs(delta_s)^2 * ...
+        psi_aw / ...
+        (delta_s * abs(psi_aw)) ...
+        ) - ...
+        abs(delta_s)
 
 if force == 'lift'
     psi_aero = (abs(psi_aw) -(0.5 * pi)) * (-delta / abs(delta))
@@ -355,10 +377,20 @@ function out = old_aero_force()
 %          out....................... 2x1 array
 %          out : Polar components of resultant force [mag; angle]
 %--------------------------------------------------------------------------
-global p4 p5 a_aw delta_s delta_r psi_aw v
+global p4 p5 %a_aw delta_s delta_r psi_aw v
 delta = delta_s
-alpha = pi - abs(psi_aw) - abs(delta)
-out = p4 * a_aw * sin(alpha)
+delta
+psi_aw
+delta_s
+alpha = pi - abs(psi_aw) - abs(delta);
+alpha = pi + ...
+        (abs(psi_aw) * ...
+        abs(delta_s)^2 * ...
+        psi_aw / ...
+        (delta_s * abs(psi_aw)) ...
+        ) - ...
+        abs(delta_s)
+out = p4 * a_aw * sin(alpha);
 
 function out = old_hydro_force()
 %--------------------------------------------------------------------------
@@ -372,7 +404,7 @@ function out = old_hydro_force()
 %          out : Polar components of resultant force [mag; angle]
 %--------------------------------------------------------------------------
 global p4 p5 a_aw delta_s delta_r psi_aw v
-alpha = delta_r
+alpha = delta_r;
 out = p5 * v^2 * sin(alpha);
 
 function out = dxdt(v,theta)
