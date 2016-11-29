@@ -2,13 +2,13 @@
 function main
 
 global p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 ...
-       a_tw psi_tw delta_s delta_r Wc_aw Wp_aw gs gr ...
+       a_tw a_aw psi_tw psi_aw delta_s delta_r Wc_aw Wp_aw gs gr ...
        F_s F_r x y theta v w A_s A_r ks kr rho_air rho_water;
 
 % model 
 p1 = 0.03;
 p2 = 40;
-p3 = 60;
+p3 = -0.6; %60;
 p4 = 200;
 p5 = 1500;
 p6 = 0.5;
@@ -61,13 +61,11 @@ D_r = hydro_force(A_r, [v;0], delta_r, kr, 'drag')
 F_s = sumAeroVectors(L_s, D_s)  
 F_r = sumAeroVectors(L_r, D_r)
 
-alpha = psi_aw - delta_s;
-%gs = p4 * a_aw * sin(alpha)
-gs = p4 * a_aw * (sin(2*alpha) * cos(alpha) + (1- cos(2*alpha)) * sin(alpha))
+alpha = pi - abs(psi_aw) - abs(delta_s)
+alpha = pi - abs(psi_aw) + (abs(delta_s)^2 * psi_aw) / (delta_s * abs(psi_aw))
+gs = p4 * a_aw * sin(alpha)
 alpha = -delta_r;
-gr = p5 * v^2 * sin(alpha) ;
-gr = p4 * v^2 * (sin(2*alpha) * cos(alpha) + (1- cos(2*alpha)) * sin(alpha))
-%update = -sign(psi_aw) * min(abs(pi - abs(psi_aw)), abs(delta_s));    
+gr = p5 * v^2 * sin(alpha);
 
 figure(1);
 figure(2);
@@ -78,7 +76,7 @@ DrawRectangle([Z_init(1), Z_init(2), 1.8, 1.2, Z_init(3), 1.2, ...
 %plot(Z_init(1), Z_init(2),'b')
 hold on
 
-for j = 1:22
+for j = 1:2
 
     [t,z] = ode45(@(t,Z) sailboat(t,Z), tspan, Z_init);
 
@@ -128,14 +126,17 @@ for j = 1:22
     L_s = aero_force(A_s, Wc_aw, delta_s, ks, 'lift');
     D_s = aero_force(A_s, Wc_aw, delta_s, ks, 'drag');
     L_r = hydro_force(A_r, [v;0], delta_r, kr, 'lift');
-    D_r = hydro_force(A_r, [v;0], delta_r, kr, 'drag');
+    D_r = hydro_force(A_r, [v;0], delta_r, kr, 'drag'); 
 
     F_s = sumAeroVectors(L_s, D_s)  
     F_r = sumAeroVectors(L_r, D_r) 
-    gs = -p4 * a_aw * sin(delta_s - psi_aw) 
-    gr = -p5 * v^2 * sin(delta_r)  
-    %gr = -sign(psi_aw) * min(abs(pi - abs(psi_aw)), abs(delta_s));    
-   
+    
+    alpha = pi - abs(psi_aw) - abs(delta_s)
+    alpha = pi - abs(psi_aw) + (abs(delta_s)^2 * psi_aw) / (delta_s * abs(psi_aw))
+    gs = p4 * a_aw * sin(alpha)
+    alpha = -delta_r;
+    gr = p5 * v^2 * sin(alpha);
+    
 end
 
 figure(1)
@@ -288,7 +289,6 @@ alpha = pi - abs(psi_aw) + (abs(delta)^2 * psi_aw) / (delta * abs(psi_aw))
 
 if force == 'lift'
     psi_aero = (abs(psi_aw) -(0.5 * pi)) * (-delta / abs(delta))
-    alpha
     C = k1 * sin(2 * alpha)
 else 
     psi_aero = psi_aw;
@@ -344,26 +344,36 @@ function out = sumAeroVectors(lift,drag)
 out = [hypot(lift(1,:), drag(1,:)); ...
        atan2((lift_y + drag_y), (lift_x + drag_x))]; 
 
-% function out = oldAeroVectors(part)
-% %--------------------------------------------------------------------------
-% % Find the resultant of perpendicular lift or drag forces as polar
-% % components.
-% % - inputs:
-% %          lift : plane area of sail or wing
-% %          drag : fluid velocity
-% % - output:
-% %          out....................... 2x1 array
-% %          out : Polar components of resultant force [mag; angle]
-% %--------------------------------------------------------------------------
-% global p4 p5 a_aw delta_s delta_r psi_aw v
-% 
-% if part == 'new'
-%     %out = -p4 * a_aw * sin(delta_s - psi_aw)
-%     out = -p5 * v^2 * sin(delta_r); 
-%     
-% elseif part == 'old'
-%     out = -p5 * v^2 * sin(delta_r) 
-% end
+function out = old_aero_force()
+%--------------------------------------------------------------------------
+% Find the resultant of perpendicular lift or drag forces as polar
+% components.
+% - inputs:
+%          lift : plane area of sail or wing
+%          drag : fluid velocity
+% - output:
+%          out....................... 2x1 array
+%          out : Polar components of resultant force [mag; angle]
+%--------------------------------------------------------------------------
+global p4 p5 a_aw delta_s delta_r psi_aw v
+delta = delta_s
+alpha = pi - abs(psi_aw) - abs(delta)
+out = p4 * a_aw * sin(alpha)
+
+function out = old_hydro_force()
+%--------------------------------------------------------------------------
+% Find the resultant of perpendicular lift or drag forces as polar
+% components.
+% - inputs:
+%          lift : plane area of sail or wing
+%          drag : fluid velocity
+% - output:
+%          out....................... 2x1 array
+%          out : Polar components of resultant force [mag; angle]
+%--------------------------------------------------------------------------
+global p4 p5 a_aw delta_s delta_r psi_aw v
+alpha = delta_r
+out = p5 * v^2 * sin(alpha);
 
 function out = dxdt(v,theta)
 %--------------------------------------------------------------------------
@@ -378,7 +388,7 @@ function out = dxdt(v,theta)
 %          out : horizontal velocity
 %--------------------------------------------------------------------------
 global p1 a_tw psi_tw;   
-out =  v * cos(theta) + p1 * a_tw * cos(psi_tw); ...
+out =  v * cos(theta) + (p1 * a_tw * cos(psi_tw)); ...
     
 function out = dydt(v, theta)
 %--------------------------------------------------------------------------
@@ -393,7 +403,7 @@ function out = dydt(v, theta)
 %          out : horizontal velocity
 %--------------------------------------------------------------------------
 global p1 a_tw psi_tw;   
-out =  v * sin(theta) + p1 * a_tw * sin(psi_tw); ...
+out =  v * sin(theta) + (p1 * a_tw * sin(psi_tw)); ...
     
 function out = dthdt(w)
 %--------------------------------------------------------------------------
@@ -443,19 +453,14 @@ function out = dwdt(v,w,version)
 global p3 p6 p7 p8 p10 gs gr F_s F_r delta_s delta_r;
 
 if version == 'old'
+    p3 = -p3
     out =  (gs * (p6 - p7 * cos(delta_s)) - gr * p8 * cos(delta_r) - p3 ...
                 * v * w) / p10; ...
 elseif version == 'new'
-%     out = ( F_s(1,:) * sin(F_s(2,:)) * (p6 - p7 * cos(delta_s))) ...
-%            + (F_r(1,:) * sin(F_r(2,:)) * p8 * cos(delta_r) ...
-%            - p3 * v * w) ...
-%            / p10; ...
-    out =  (gs * (p6 - p7 * cos(delta_s)) - gr * p8 * cos(delta_r) - p3 ...
-                * v * w) / p10; ...
-    out = ( F_s(1,:) * sin(-F_s(2,:))) * (p6 - (p7 * cos(delta_s)))/p10; ...
-           %+ (F_r(1,:) * sin(F_r(2,:)) * p8 * cos(delta_r) ...
-           %- p3 * v * w) ...
-           %/ p10; ...
+    out = (( F_s(1,:) * sin(-F_s(2,:))) * (p6 - (p7 * cos(delta_s))) ... % moment due to force on sails 
+           + F_r(1,:) * sin(-F_r(2,:)) * p8 * cos(delta_r) ...     % moment due to force on rudder
+           + p3 * v * w) ... % moment due to rotational drag
+           / p10; ...
            
 end
     
