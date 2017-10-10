@@ -43,10 +43,10 @@ Z_init = [x y theta v w]
 
 % wind
 a_tw = 3;
-psi_tw = - pi * 0.5 %* 2/3 ;
+psi_tw = pi * 0.5 %* 2/3 ;
 
 % rudder and sail angle
-delta_s = pi * 0.25 ;                                        
+delta_s = - pi * 0.25 ;                                        
 delta_r = 0  ;                                     
 
 % apparent wind
@@ -84,7 +84,7 @@ DrawRectangle([Z_init(1), Z_init(2), 1.8, 1.2, Z_init(3), 1.2, ...
 %plot(Z_init(1), Z_init(2),'b')
 hold on
 
-for j = 1:10
+for j = 1:5
 
     [t,z] = ode45(@(t,Z) sailboat(t,Z), tspan, Z_init);
 
@@ -485,7 +485,7 @@ function out = dwdt(v,w,version)
 global p3 p6 p7 p8 p10 gs gr F_s F_r delta_s delta_r;
 
 if version == 'old'
-    p3 = -p3
+    p3 = -p3;
     out =  (gs * (p6 - p7 * cos(delta_s)) - gr * p8 * cos(delta_r) - p3 ...
                 * v * w) / p10; ...
 elseif version == 'new'

@@ -1,0 +1,27 @@
+Tutorial on solving DDEs with DDE23.
+
+Solving Delay Differential Equations with DDE23. Tutorial + Examples.
+
+
+This tutorial shows how to use the MATLAB solver DDE23 to solve delay 
+differential equations (DDEs) with constant delays. The solver is 
+available in MATLAB 6.5 and later. 
+
+The tutorial briefly discusses the differences between solving ODEs 
+and DDEs, and describes the techniques used in DDE23. The capabilities 
+of the solver are illustrated by several realistic examples. 
+Additional exercises and problems are provided for practice. The codes 
+that solve all the examples, exercises, and problems can be found in 
+the directory DDE_examples.
+The directory DDE_examples_70 contains the files for all the examples 
+exercises, and problems, updated to take advantage of features available 
+in MATLAB 7.0 (R14). 
+
+More information about solving DDEs in MATLAB, can be found in
+the paper 
+  L.F. Shampine, S. Thompson, Solving DDEs in MATLAB, 
+  Appl. Numer. Math., 37 (2001), pp. 441-458.
+or in the book
+  L.F. Shampine, I. Gladwell, and S. Thompson, 
+  Solving ODEs with MATLAB, Cambridge University Press, 2003. 
+

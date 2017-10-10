@@ -1,0 +1,14 @@
+# CREATE ZIP FOLDER of existing folder
+zip -r folder{.zip,}
+
+# or You can add a bash function that does this to your .bashrc file:
+
+function fzip {
+    zip -r $1 $1
+}
+
+#Then in the shell you can do:
+
+user@host:~$ fzip my_folder
+
+#################################################################

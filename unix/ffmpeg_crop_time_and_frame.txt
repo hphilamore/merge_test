@@ -1,0 +1,38 @@
+convert .avi / .mov to .mp4 for editing e.g.:
+
+ffmpeg -i CIMG7019.MOV -qscale 0 -vcodec mpeg4 -acodec ac3 output.mp4
+
+
+speed up the video e.g. double the frame rate AND convert to .mp4:
+
+ffmpeg -i input.AVI -r 48 -filter:v "setpts=0.25*PTS" -strict -2 output.mp4
+
+
+#cut mp4 (time):
+
+ffmpeg -i output.mp4 -ss 00:00:03 -t 00:00:08 -async 1 -strict -2 output_cut.mp4
+
+#-ss = start point
+#-t = duration
+
+#crop video (dimensions):
+ffmpeg -i duck_swim1.mp4 -vf "crop=1400:800:0:1080" -strict -2 duck1.mp4
+
+ffmpeg -i before.mp4 -vf "crop=w:h:x:y" after.mp4
+
+#w:h = width and height of crop
+#x:y = horizontl and vertical starting point - 0:0 = TOP LEFT corner 
+
+ffmpeg -i duck_swim1.mp4 -vf "crop=1400:800:0:1080" -strict -2 duck1.mp4
+
+ffmpeg -i before.mp4 -vf "crop=w:h:x:y" after.mp4
+#w:h = width and height of crop
+#x:y = horizontl and vertical starting point - 0:0 = TOP LEFT corner 
+
+#Be aware that FFmpeg will re-encode the video using x264, when the MP4 container is selected. With no additional options, this defaults to a constant quality factor (CRF) set to 23. To increase the quality—which could be necessary for screen recordings with sharp edges and text—use a lower value, maybe go down to 18:
+
+ffmpeg -i before.mp4 -vf "crop=w:h:x:y" -crf 18 -strict -2 out.mp4
+
+# the size to crop a power point slide
+ffmpeg -i vidA.mp4 -vf "crop=1100:750:120:0" -strict -2 duck1.mp4
+

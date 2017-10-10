@@ -1,0 +1,283 @@
+import os
+import csv
+import numpy as np
+import fnmatch
+from matplotlib import pyplot as plt
+import glob
+import time
+from collections import OrderedDict
+
+# output _data file
+dateStr = time.strftime(
+    '%Y-%m-%d')
+timeStr = time.strftime(
+    '%Y-%m-%d_%H_%M_%S')
+dirname = "summary_plots/" + "{0}{1}".format("Data_", dateStr)
+subdirname = "{0}{1}".format("Data_", timeStr)
+os.makedirs(dirname + "/"+ subdirname)
+
+# First find the _data
+for root, dirs, files in os.walk("/media/"):
+    for file in files:
+        if file.endswith(
+                "Data_2016-08-14_23_35_24_troph_summary.csv"):
+            print(os.path.join(root, file))
+            data_location = os.path.join(root, file)
+
+# # select the directory 2 steps up from current location
+target_dir = os.path.sep.join(data_location.split(os.path.sep)[:-2])
+print(target_dir)
+
+data_to_import = ['trophallaxis_mode', 'final_count', 'e_threshold_trophallaxis', 'total_food_initial', 'total_food_final', 'area_explored']
+#names = [trophallaxis_mode, final_count, e_threshold_trophallaxis, total_food_initial, total_food_final, area_explored]
+data = []
+averaged_data = []
+
+data = {}
+averaged_data = {}
+
+for _data in data_to_import:
+    data[_data]= []
+    averaged_data[_data] = []
+
+# Then import the _data for each case:
+for root, dirs, files in os.walk(target_dir):
+    for file in files:
+        if file.endswith(".csv"):
+            if fnmatch.fnmatch(file, "*summary*"):
+                data_location = os.path.join(root, file)
+                # full_file = os.path(file)
+                #print(data_location)
+                with open(data_location, mode='r') as f:
+                    reader = csv.reader(f)
+                    for row in reader:
+                        for _data in data_to_import:
+                            if row[0] in [_data]:
+                                #eval(_data).append(row[1])
+                                data[_data].append(row[1])
+
+for _data in data:
+    if _data != "trophallaxis_mode":
+        print(data[_data])
+        data[_data] = [float(d) for d in data[_data]]
+print(data)
+
+data["specific_final_count"] = [a / (b - c) for a, b, c in zip(
+        data['final_count'],
+        data['total_food_initial'],
+        data['total_food_final'])]
+
+data["specific_area_explored"] = [a / (b - c) for a, b, c in zip(
+        data['final_count'],
+        data['total_food_initial'],
+        data['total_food_final'])]
+
+data["food_removed"] = [(b - c) for a, b, c in zip(
+    data['final_count'],
+    data['total_food_initial'],
+    data['total_food_final'])]
+
+data["specific_food_removed"] = [(b - c) / b for a, b, c in zip(
+        data['final_count'],
+        data['total_food_initial'],
+        data['total_food_final'])]
+
+averaged_data["specific_final_count"] = []
+averaged_data["specific_area_explored"] = []
+averaged_data["specific_food_removed"] = []
+averaged_data["food_removed"] = []
+
+threshold = list(set(data["e_threshold_trophallaxis"]))
+print("")
+print(data)
+
+for d in data:
+    if d != "trophallaxis_mode":
+        for t in threshold:
+            averaged_data[d].append(
+                    np.mean(
+                    [i for i,j in zip(data[d],
+                     data["e_threshold_trophallaxis"])
+                     if j == t]))
+
+fig, ax1 = plt.subplots()
+ax2 = ax1.twinx()
+
+lns1 = ax1.plot(threshold, averaged_data["area_explored"],
+                marker='x', linestyle='-',
+                color='k', label='Area Explored')
+lns2 = ax2.plot(threshold, averaged_data["specific_area_explored"],
+                marker='^', linestyle='-',
+                color='k', label='Specific Area Explored')
+lns = lns1 + lns2
+labels = [l.get_label() for l in lns]
+ax1.legend(lns, labels, loc=0, frameon=False)
+ax1.set_xlabel('Trophallaxis Energy Threshold (units stored energy)')
+ax1.set_ylabel('Area Explored (number of cells)')
+ax2.set_ylabel('Area Explored per Food Consumed (number of cells/food consumed)')
+
+plotname = dirname + '_area_explored'
+fig.savefig(plotname + '.pdf', orientation='landscape')
+
+fig, ax3 = plt.subplots()
+ax4 = ax3.twinx()
+lns1 = ax3.plot(threshold, averaged_data["final_count"],
+                marker='x', linestyle='-',
+                color='k', label='Lifespan')
+lns2 = ax4.plot(threshold, averaged_data["specific_final_count"],
+                marker='^', linestyle='-',
+                color='k', label='Specific Lifespan')
+lns = lns1 + lns2
+labels = [l.get_label() for l in lns]
+ax3.legend(lns, labels, loc=0, frameon=False)
+ax3.set_xlabel('Trophallaxis Energy Threshold (units stored energy)')
+ax3.set_ylabel('Lifespan (counts)')
+ax4.set_ylabel('Lifespan per Food Consumed (counts/food consumed')
+
+plotname = dirname + '_lifespan'
+fig.savefig(plotname + '.pdf', orientation='landscape')
+
+
+fig, ax5 = plt.subplots()
+ax6 = ax5.twinx()
+
+lns1 = ax5.plot(threshold, averaged_data["food_removed"],
+                marker='x', linestyle='-',
+                color='k', label='Food Removed')
+lns2 = ax6.plot(threshold, averaged_data["specific_food_removed"],
+                marker='^', linestyle='-',
+                color='k', label='Specific Food Removed')
+lns = lns1 + lns2
+labels = [l.get_label() for l in lns]
+ax5.legend(lns, labels, loc=0, frameon=False)
+ax5.set_xlabel('Trophallaxis Energy Threshold (units stored energy)')
+ax5.set_ylabel('Food removed (initial food - final food)')
+ax6.set_ylabel('Specific Food removed ((initial food - final food)/initial food)')
+
+plotname = dirname + "/"+ subdirname + '_food_consumed'
+fig.savefig(plotname + '.pdf', orientation='landscape')
+
+plt.show()
+
+
+
+
+
+#     AA = (np.std(
+#                 [i for i,j in zip(food_A_removed_all, strategy_all) if j == strategy]))
+#     BB = (np.std(
+#                 [i for i, j in zip(food_B_removed_all, strategy_all) if j == strategy]))
+#     RR = (np.std(
+#                 [i for i,j in zip(rise_bots_on_food_all, strategy_all) if j == strategy]))
+#     CC = (np.std(
+#             [i for i,j in zip(count_all, strategy_all) if j == strategy]))
+#
+#     AAA.append((AA, np.clip(AA, 0, A)))
+#     BBB.append((BB, np.clip(BB, 0, B)))
+#     CCC.append((CC, np.clip(CC, 0, c)))
+#     RRR.append((RR, np.clip(RR, 0, rise)))
+#
+#
+#     print(strategy, "SD", AA, BB, RR, CC)
+#     print(strategy, "mean", A, B, rise, c)
+#     print(strategy, AA/A, BB/B, RR/rise, CC/c)
+#     print("")
+#
+#     #
+# # for strategy in strategies:
+# #     A = (np.mean(
+# #         [i for i,j in zip(food_A_removed_all, strategy_all) if j == strategy]))
+# #     food_A.append(A)
+# #
+# #     food_A.append(A)
+# #     food_A_err.append((A + AA,  np.maximum((A - AA), 0) ))
+# #
+# #     B = (
+# #     np.mean(
+# #         [i for i, j in zip(food_B_removed_all, strategy_all) if j == strategy]))
+# #     food_B.append(B)
+# #
+# #     food_B.append(B)
+# #     food_B_err.append((B + BB, np.maximum((B - BB), 0)))
+# #
+# #     R = (np.mean(
+# #         [i for i,j in zip(rise_bots_on_food_all, strategy_all) if j == strategy]))
+# #     max_rise.append(R)
+# #     RR = (np.std(
+# #         [i for i,j in zip(rise_bots_on_food_all, strategy_all) if j == strategy]))
+# #     max_rise_err.append((R + RR, np.maximum((R - RR), 0)))
+# #
+# #     C = (np.mean(
+# #         [i for i,j in zip(count_all, strategy_all) if j == strategy]))
+# #     count_total.append(C)
+# #     CC = (np.std(
+# #         [i for i,j in zip(count_all, strategy_all) if j == strategy]))
+# #     count_total_err.append((C + CC, np.maximum((C - CC), 0)))
+#
+#
+# names = {'FalseTrue': 'Relay Chains only',
+#         'FalseFalse':'No Trophallaxis or Relay Chains',
+#         'TrueFalse':'Trophallaxis only',
+#         'TrueTrue': 'Trophallaxis and Relay Chains'}
+#
+# # print(food_A_err)
+# # print(food_B_err)
+# print(food_A)
+# print(food_B)
+#
+# mark = ['ks', 'ko', 'kD', 'k^']
+#
+# # First find the _data
+# for root, dirs, files in os.walk("/media/"):
+#     for file in files:
+#         if file.endswith("trophallaxis.tex"):
+#             print(os.path.join(root, file))
+#             data_location = os.path.join(root, file)
+# target_dir = os.path.sep.join(data_location.split(os.path.sep)[:-1])
+#
+# # for x,y,u,v,m, s in zip(food_A,  food_B, food_A_err, food_B_err, mark, strategies):
+# for x, y, u, v, m, s in zip(food_A, food_B, AAA, BBB, mark,
+#                                 strategies):
+#     # plt.hlines( y, x-u[1], x+u[0])
+#     # plt.vlines( x, y-v[1], y+v[0])
+#     plt.errorbar(x, y, xerr=np.array([[u[1], u[0]]]).T, yerr=np.array([[v[1], v[0]]]).T,
+#              fmt=m, label = names[s], mfc='none', ms = 15.0)
+#     #plt.scatter(x,y)
+#     plt.legend(frameon=False, loc = 2, prop={'size':12})
+#     plt.xlabel('food removed, Patch A')
+#     plt.ylabel('food removed, Patch, B')
+#
+# plt.savefig(target_dir + "/Figures/food_removal.pdf", bbox_inches='tight')
+#
+# timeStr = time.strftime('%m-%d-%Y_%H_%M_%S_%Z')
+# backup_file = "{0}.{1}".format("Data", timeStr)
+# plt.savefig(target_dir + "/Figures/" + backup_file + "food_removal.pdf")
+#
+# plt.show()
+#
+# # for x,y,u,v,m, s in zip(count_total,  max_rise, count_total_err, max_rise_err, mark, strategies):
+# for x, y, u, v, m, s in zip(count_total, max_rise, CCC,
+#                             RRR, mark, strategies):
+#     # plt.hlines( y, x-u[1], x+u[0])
+#     # plt.vlines( x, y-v[1], y+v[0])
+#     #y, bin_edges = numpy.histogram(x, bins=4)
+#     plt.errorbar(x, y, xerr=np.array([[u[1], u[0]]]).T, yerr=np.array([[v[1], v[0]]]).T,
+#              fmt=m, label = names[s], mfc='none', ms = 15.0)
+#     #plt.scatter(x,y)
+#     plt.legend(frameon=False, loc = 2 ,prop={'size':12})
+#     plt.xlabel('swarm lifespan (cycles)')
+#     plt.ylabel('increase in functioning swarm size')
+#
+# plt.savefig(target_dir + "/Figures/survival.pdf"
+#         , bbox_inches='tight')
+#
+# timeStr = time.strftime('%m-%d-%Y_%H_%M_%S_%Z')
+# backup_file = "{0}.{1}".format("Data", timeStr)
+# plt.savefig(target_dir + "/Figures/" + backup_file + "survival.pdf")
+# plt.show()
+#
+#
+# counts,bin_edges = np.histogram(max_rise,4)
+# bin_centres = (bin_edges[:-1] + bin_edges[1:])/2.
+# plt.errorbar(bin_centres, counts, yerr=np.array(max_rise_err).T, fmt='o')
+# plt.show()

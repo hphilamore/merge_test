@@ -1,0 +1,544 @@
+
+
+HI-TECH Software PIC LITE Macro Assembler V9.83 build 10920 
+                                                                                               Tue May 28 10:58:25 2013
+
+HI-TECH Software Omniscient Code Generator (Lite mode) build 10920
+     1  0000                     opt subtitle "HI-TECH Software Omniscient Code Generator (Lite mode) build 10920"
+     2                           
+     3                           opt pagewidth 120
+     4                           
+     5                           	opt lm
+     6                           
+     7                           	processor	12LF1822
+     8                           clrc	macro
+     9                           	bcf	3,0
+    10  0000                     	endm
+    11                           clrz	macro
+    12                           	bcf	3,2
+    13  0000                     	endm
+    14                           setc	macro
+    15                           	bsf	3,0
+    16  0000                     	endm
+    17                           setz	macro
+    18                           	bsf	3,2
+    19  0000                     	endm
+    20                           skipc	macro
+    21                           	btfss	3,0
+    22  0000                     	endm
+    23                           skipz	macro
+    24                           	btfss	3,2
+    25  0000                     	endm
+    26                           skipnc	macro
+    27                           	btfsc	3,0
+    28  0000                     	endm
+    29                           skipnz	macro
+    30                           	btfsc	3,2
+    31  0000                     	endm
+    32  0000                     indf	equ	0
+    33  0000                     indf0	equ	0
+    34  0001                     indf1	equ	1
+    35  0002                     pc	equ	2
+    36  0002                     pcl	equ	2
+    37  0003                     status	equ	3
+    38  0004                     fsr0l	equ	4
+    39  0005                     fsr0h	equ	5
+    40  0006                     fsr1l	equ	6
+    41  0007                     fsr1h	equ	7
+    42  0008                     bsr	equ	8
+    43  0009                     wreg	equ	9
+    44  000B                     intcon	equ	11
+    45  0001                     c	equ	1
+    46  0000                     z	equ	0
+    47  000A                     pclath	equ	10
+    48                           	FNCALL	_main,_loop
+    49                           	FNROOT	_main
+    50                           	global	_PORTA
+    51                           psect	text76,local,class=CODE,delta=2
+    52                           global __ptext76
+    53  0000                     __ptext76:
+    54  000C                     _PORTA	set	12
+    55                           	global	_CARRY
+    56  0018                     _CARRY	set	24
+    57                           	global	_GIE
+    58  005F                     _GIE	set	95
+    59                           	global	_RA2
+    60  0062                     _RA2	set	98
+    61                           	global	_RA4
+    62  0064                     _RA4	set	100
+    63                           	global	_RA5
+    64  0065                     _RA5	set	101
+    65                           	global	_TRISA
+    66  008C                     _TRISA	set	140
+    67                           	global	_EEADR
+    68  0191                     _EEADR	set	401
+    69                           	global	_ANSELA
+    70  018C                     _ANSELA	set	396
+    71                           	global	_EECON1
+    72  0195                     _EECON1	set	405
+    73                           	global	_EECON2
+    74  0196                     _EECON2	set	406
+    75                           	global	_EEDATA
+    76  0193                     _EEDATA	set	403
+    77                           	global	_RD
+    78  0CA8                     _RD	set	3240
+    79                           	global	_WR
+    80  0CA9                     _WR	set	3241
+    81                           	global	_WREN
+    82  0CAA                     _WREN	set	3242
+    83                           	file	"digital_voltage_interrupt.as"
+    84                           	line	#
+    85                           psect cinit,class=CODE,delta=2
+    86                           global start_initialization
+    87  07B7                     start_initialization:
+    88                           
+    89                           psect cinit,class=CODE,delta=2
+    90                           global end_of_initialization
+    91                           
+    92                           ;End of C runtime variable initialization code
+    93                           
+    94  07B7                     end_of_initialization:
+    95  07B7  0020               movlb 0
+    96  07B8  2FB9               ljmp _main	;jump to C main() function
+    97                           psect	cstackCOMMON,class=COMMON,space=1
+    98                           global __pcstackCOMMON
+    99  0070                     __pcstackCOMMON:
+   100                           	global	?_loop
+   101  0070                     ?_loop:	; 0 bytes @ 0x0
+   102                           	global	??_loop
+   103  0070                     ??_loop:	; 0 bytes @ 0x0
+   104                           	global	?_main
+   105  0070                     ?_main:	; 2 bytes @ 0x0
+   106  0070                     	ds	2
+   107                           	global	??_main
+   108  0072                     ??_main:	; 0 bytes @ 0x2
+   109 ;;Data sizes: Strings 0, constant 0, data 0, bss 0, persistent 0 stack 0
+   110 ;;Auto spaces:   Size  Autos    Used
+   111 ;; COMMON          14      2       2
+   112 ;; BANK0           80      0       0
+   113 ;; BANK1           32      0       0
+   114                           
+   115 ;;
+   116 ;; Pointer list with targets:
+   117                           
+   118                           
+   119                           
+   120 ;;
+   121 ;; Critical Paths under _main in COMMON
+   122 ;;
+   123 ;;   _main->_loop
+   124 ;;
+   125 ;; Critical Paths under _main in BANK0
+   126 ;;
+   127 ;;   None.
+   128 ;;
+   129 ;; Critical Paths under _main in BANK1
+   130 ;;
+   131 ;;   None.
+   132                           
+   133 ;;
+   134 ;;Main: autosize = 0, tempsize = 0, incstack = 0, save=0
+   135 ;;
+   136                           
+   137 ;;
+   138 ;;Call Graph Tables:
+   139 ;;
+   140 ;; ---------------------------------------------------------------------------------
+   141 ;; (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
+   142 ;; ---------------------------------------------------------------------------------
+   143 ;; (0) _main                                                 0     0      0       0
+   144 ;;                               _loop
+   145 ;; ---------------------------------------------------------------------------------
+   146 ;; (1) _loop                                                 2     2      0       0
+   147 ;;                                              0 COMMON     2     2      0
+   148 ;; ---------------------------------------------------------------------------------
+   149 ;; Estimated maximum stack depth 1
+   150 ;; ---------------------------------------------------------------------------------
+   151                           
+   152 ;; Call Graph Graphs:
+   153                           
+   154 ;; _main (ROOT)
+   155 ;;   _loop
+   156 ;;
+   157                           
+   158 ;; Address spaces:
+   159                           
+   160 ;;Name               Size   Autos  Total    Cost      Usage
+   161 ;;BIGRAM              70      0       0       0        0.0%
+   162 ;;EEDATA             100      0       0       0        0.0%
+   163 ;;NULL                 0      0       0       0        0.0%
+   164 ;;CODE                 0      0       0       0        0.0%
+   165 ;;BITCOMMON            E      0       0       1        0.0%
+   166 ;;BITSFR0              0      0       0       1        0.0%
+   167 ;;SFR0                 0      0       0       1        0.0%
+   168 ;;COMMON               E      2       2       2       14.3%
+   169 ;;BITSFR1              0      0       0       2        0.0%
+   170 ;;SFR1                 0      0       0       2        0.0%
+   171 ;;BITSFR2              0      0       0       3        0.0%
+   172 ;;SFR2                 0      0       0       3        0.0%
+   173 ;;STACK                0      0       1       3        0.0%
+   174 ;;BITSFR3              0      0       0       4        0.0%
+   175 ;;SFR3                 0      0       0       4        0.0%
+   176 ;;ABS                  0      0       0       4        0.0%
+   177 ;;BITBANK0            50      0       0       5        0.0%
+   178 ;;BITSFR4              0      0       0       5        0.0%
+   179 ;;SFR4                 0      0       0       5        0.0%
+   180 ;;BANK0               50      0       0       6        0.0%
+   181 ;;BITSFR5              0      0       0       6        0.0%
+   182 ;;SFR5                 0      0       0       6        0.0%
+   183 ;;BITBANK1            20      0       0       7        0.0%
+   184 ;;BITSFR6              0      0       0       7        0.0%
+   185 ;;SFR6                 0      0       0       7        0.0%
+   186 ;;BANK1               20      0       0       8        0.0%
+   187 ;;BITSFR7              0      0       0       8        0.0%
+   188 ;;SFR7                 0      0       0       8        0.0%
+   189 ;;BITSFR8              0      0       0       9        0.0%
+   190 ;;SFR8                 0      0       0       9        0.0%
+   191 ;;DATA                 0      0       0       9        0.0%
+   192 ;;BITSFR9              0      0       0      10        0.0%
+   193 ;;SFR9                 0      0       0      10        0.0%
+   194 ;;BITSFR10             0      0       0      11        0.0%
+   195 ;;SFR10                0      0       0      11        0.0%
+   196 ;;BITSFR11             0      0       0      12        0.0%
+   197 ;;SFR11                0      0       0      12        0.0%
+   198 ;;BITSFR12             0      0       0      13        0.0%
+   199 ;;SFR12                0      0       0      13        0.0%
+   200 ;;BITSFR13             0      0       0      14        0.0%
+   201 ;;SFR13                0      0       0      14        0.0%
+   202 ;;BITSFR14             0      0       0      15        0.0%
+   203 ;;SFR14                0      0       0      15        0.0%
+   204 ;;BITSFR15             0      0       0      16        0.0%
+   205 ;;SFR15                0      0       0      16        0.0%
+   206 ;;BITSFR16             0      0       0      17        0.0%
+   207 ;;SFR16                0      0       0      17        0.0%
+   208 ;;BITSFR17             0      0       0      18        0.0%
+   209 ;;SFR17                0      0       0      18        0.0%
+   210 ;;BITSFR18             0      0       0      19        0.0%
+   211 ;;SFR18                0      0       0      19        0.0%
+   212 ;;BITSFR19             0      0       0      20        0.0%
+   213 ;;SFR19                0      0       0      20        0.0%
+   214 ;;BITSFR20             0      0       0      21        0.0%
+   215 ;;SFR20                0      0       0      21        0.0%
+   216 ;;BITSFR21             0      0       0      22        0.0%
+   217 ;;SFR21                0      0       0      22        0.0%
+   218 ;;BITSFR22             0      0       0      23        0.0%
+   219 ;;SFR22                0      0       0      23        0.0%
+   220 ;;BITSFR23             0      0       0      24        0.0%
+   221 ;;SFR23                0      0       0      24        0.0%
+   222 ;;BITSFR24             0      0       0      25        0.0%
+   223 ;;SFR24                0      0       0      25        0.0%
+   224 ;;BITSFR25             0      0       0      26        0.0%
+   225 ;;SFR25                0      0       0      26        0.0%
+   226 ;;BITSFR26             0      0       0      27        0.0%
+   227 ;;SFR26                0      0       0      27        0.0%
+   228 ;;BITSFR27             0      0       0      28        0.0%
+   229 ;;SFR27                0      0       0      28        0.0%
+   230 ;;BITSFR28             0      0       0      29        0.0%
+   231 ;;SFR28                0      0       0      29        0.0%
+   232 ;;BITSFR29             0      0       0      30        0.0%
+   233 ;;SFR29                0      0       0      30        0.0%
+   234 ;;BITSFR30             0      0       0      31        0.0%
+   235 ;;SFR30                0      0       0      31        0.0%
+   236 ;;BITSFR31             0      0       0      32        0.0%
+   237 ;;SFR31                0      0       0      32        0.0%
+   238                           
+   239                           	global	_main
+   240                           psect	maintext,global,class=CODE,delta=2
+   241                           global __pmaintext
+   242  07B9                     __pmaintext:
+   243                           
+   244 ;; *************** function _main *****************
+   245 ;; Defined at:
+   246 ;;		line 13 in file "C:\Users\h-philamore\PhD\Robot brain\IPMC_switch_3\digital_voltage_interrupt.c"
+   247 ;; Parameters:    Size  Location     Type
+   248 ;;		None
+   249 ;; Auto vars:     Size  Location     Type
+   250 ;;		None
+   251 ;; Return value:  Size  Location     Type
+   252 ;;                  2  1146[COMMON] int 
+   253 ;; Registers used:
+   254 ;;		wreg, status,2, status,0, pclath, cstack
+   255 ;; Tracked objects:
+   256 ;;		On entry : 17F/0
+   257 ;;		On exit  : 0/0
+   258 ;;		Unchanged: 0/0
+   259 ;; Data sizes:     COMMON   BANK0   BANK1
+   260 ;;      Params:         0       0       0
+   261 ;;      Locals:         0       0       0
+   262 ;;      Temps:          0       0       0
+   263 ;;      Totals:         0       0       0
+   264 ;;Total ram usage:        0 bytes
+   265 ;; Hardware stack levels required when called:    1
+   266 ;; This function calls:
+   267 ;;		_loop
+   268 ;; This function is called by:
+   269 ;;		Startup code after reset
+   270 ;; This function uses a non-reentrant model
+   271 ;;
+   272                           psect	maintext
+   273                           	file	"C:\Users\h-philamore\PhD\Robot brain\IPMC_switch_3\digital_voltage_interrupt.c"
+   274                           	line	13
+   275                           	global	__size_of_main
+   276  0016                     	__size_of_main	equ	__end_of_main-_main
+   277                           	
+   278  07B9                     _main:	
+   279                           	opt	stack 15
+   280                           ; Regs used in _main: [wreg+status,2+status,0+pclath+cstack]
+   281                           	line	18
+   282                           	
+   283  07B9                     l3491:	
+   284                           ;digital_voltage_interrupt.c: 18: PORTA = 0;
+   285  07B9  0020               	movlb 0	; select bank0
+   286  07BA  018C               	clrf	(12)	;volatile
+   287                           	line	19
+   288                           	
+   289  07BB                     l3493:	
+   290                           ;digital_voltage_interrupt.c: 19: TRISA = 0b00001100;
+   291  07BB  300C               	movlw	(0Ch)
+   292  07BC  0021               	movlb 1	; select bank1
+   293  07BD  008C               	movwf	(140)^080h	;volatile
+   294                           	line	24
+   295                           	
+   296  07BE                     l3495:	
+   297                           ;digital_voltage_interrupt.c: 24: ANSELA = 0b0000000;
+   298  07BE  0023               	movlb 3	; select bank3
+   299  07BF  018C               	clrf	(396)^0180h	;volatile
+   300  07C0  2FC6               	goto	l3499
+   301                           	line	26
+   302                           ;digital_voltage_interrupt.c: 26: while (1)
+   303                           	
+   304  07C1                     l1147:	
+   305                           	line	30
+   306                           ;digital_voltage_interrupt.c: 27: {
+   307                           ;digital_voltage_interrupt.c: 30: while (RA2 == 1)
+   308  07C1  2FC6               	goto	l3499
+   309                           	
+   310  07C2                     l1149:	
+   311                           	line	38
+   312                           	
+   313  07C2                     l3497:	
+   314                           ;digital_voltage_interrupt.c: 32: {
+   315                           ;digital_voltage_interrupt.c: 38: loop();
+   316  07C2  3187  27CF  3187   	fcall	_loop
+   317  07C5  2FC6               	goto	l3499
+   318                           	line	44
+   319                           	
+   320  07C6                     l1148:	
+   321                           	line	30
+   322                           	
+   323  07C6                     l3499:	
+   324  07C6  0020               	movlb 0	; select bank0
+   325  07C7  190C               	btfsc	(98/8),(98)&7
+   326  07C8  2FCA               	goto	u2151
+   327  07C9  2FCB               	goto	u2150
+   328  07CA                     u2151:
+   329  07CA  2FC2               	goto	l3497
+   330  07CB                     u2150:
+   331  07CB  2FC6               	goto	l3499
+   332                           	
+   333  07CC                     l1150:	
+   334  07CC  2FC6               	goto	l3499
+   335                           	line	46
+   336                           	
+   337  07CD                     l1151:	
+   338                           	line	26
+   339  07CD  2FC6               	goto	l3499
+   340                           	
+   341  07CE                     l1152:	
+   342                           	line	47
+   343                           	
+   344  07CE                     l1153:	
+   345                           	global	start
+   346  07CE  2801               	ljmp	start
+   347                           	opt stack 0
+   348                           GLOBAL	__end_of_main
+   349  07CF                     	__end_of_main:
+   350 ;; =============== function _main ends ============
+   351                           
+   352                           	signat	_main,90
+   353                           	global	_loop
+   354                           psect	text77,local,class=CODE,delta=2
+   355                           global __ptext77
+   356  07CF                     __ptext77:
+   357                           
+   358 ;; *************** function _loop *****************
+   359 ;; Defined at:
+   360 ;;		line 52 in file "C:\Users\h-philamore\PhD\Robot brain\IPMC_switch_3\digital_voltage_interrupt.c"
+   361 ;; Parameters:    Size  Location     Type
+   362 ;;		None
+   363 ;; Auto vars:     Size  Location     Type
+   364 ;;		None
+   365 ;; Return value:  Size  Location     Type
+   366 ;;		None               void
+   367 ;; Registers used:
+   368 ;;		wreg
+   369 ;; Tracked objects:
+   370 ;;		On entry : 0/0
+   371 ;;		On exit  : 0/0
+   372 ;;		Unchanged: 0/0
+   373 ;; Data sizes:     COMMON   BANK0   BANK1
+   374 ;;      Params:         0       0       0
+   375 ;;      Locals:         0       0       0
+   376 ;;      Temps:          2       0       0
+   377 ;;      Totals:         2       0       0
+   378 ;;Total ram usage:        2 bytes
+   379 ;; Hardware stack levels used:    1
+   380 ;; This function calls:
+   381 ;;		Nothing
+   382 ;; This function is called by:
+   383 ;;		_main
+   384 ;; This function uses a non-reentrant model
+   385 ;;
+   386                           psect	text77
+   387                           	file	"C:\Users\h-philamore\PhD\Robot brain\IPMC_switch_3\digital_voltage_interrupt.c"
+   388                           	line	52
+   389                           	global	__size_of_loop
+   390  0031                     	__size_of_loop	equ	__end_of_loop-_loop
+   391                           	
+   392  07CF                     _loop:	
+   393                           	opt	stack 15
+   394                           ; Regs used in _loop: [wreg]
+   395                           	line	53
+   396                           	
+   397  07CF                     l3475:	
+   398                           ;digital_voltage_interrupt.c: 53: RA4 = 0;
+   399  07CF  0020               	movlb 0	; select bank0
+   400  07D0  120C               	bcf	(100/8),(100)&7
+   401                           	line	54
+   402                           ;digital_voltage_interrupt.c: 54: RA5 = 0;
+   403  07D1  128C               	bcf	(101/8),(101)&7
+   404                           	line	55
+   405                           	
+   406  07D2                     l3477:	
+   407                           ;digital_voltage_interrupt.c: 55: _delay((unsigned long)((100)*(500000/4000.0)));
+   408                           	opt asmopt_off
+   409  07D2  3011               movlw	17
+   410  07D3  00F1               movwf	((??_loop+0)+0+1),f
+   411  07D4  303A               	movlw	58
+   412  07D5  00F0               movwf	((??_loop+0)+0),f
+   413  07D6                     u2167:
+   414  07D6  0BF0               	decfsz	((??_loop+0)+0),f
+   415  07D7  2FD6               	goto	u2167
+   416  07D8  0BF1               	decfsz	((??_loop+0)+0+1),f
+   417  07D9  2FD6               	goto	u2167
+   418  07DA  0064               	clrwdt
+   419                           opt asmopt_on
+   420                           
+   421                           	line	57
+   422                           	
+   423  07DB                     l3479:	
+   424                           ;digital_voltage_interrupt.c: 57: RA4 = 1;
+   425  07DB  0020               	movlb 0	; select bank0
+   426  07DC  160C               	bsf	(100/8),(100)&7
+   427                           	line	58
+   428                           	
+   429  07DD                     l3481:	
+   430                           ;digital_voltage_interrupt.c: 58: RA5 = 0;
+   431  07DD  128C               	bcf	(101/8),(101)&7
+   432                           	line	59
+   433                           ;digital_voltage_interrupt.c: 59: _delay((unsigned long)((100)*(500000/4000.0)));
+   434                           	opt asmopt_off
+   435  07DE  3011               movlw	17
+   436  07DF  00F1               movwf	((??_loop+0)+0+1),f
+   437  07E0  303A               	movlw	58
+   438  07E1  00F0               movwf	((??_loop+0)+0),f
+   439  07E2                     u2177:
+   440  07E2  0BF0               	decfsz	((??_loop+0)+0),f
+   441  07E3  2FE2               	goto	u2177
+   442  07E4  0BF1               	decfsz	((??_loop+0)+0+1),f
+   443  07E5  2FE2               	goto	u2177
+   444  07E6  0064               	clrwdt
+   445                           opt asmopt_on
+   446                           
+   447                           	line	62
+   448                           	
+   449  07E7                     l3483:	
+   450                           ;digital_voltage_interrupt.c: 62: RA4 = 0;
+   451  07E7  0020               	movlb 0	; select bank0
+   452  07E8  120C               	bcf	(100/8),(100)&7
+   453                           	line	63
+   454                           	
+   455  07E9                     l3485:	
+   456                           ;digital_voltage_interrupt.c: 63: RA5 = 0;
+   457  07E9  128C               	bcf	(101/8),(101)&7
+   458                           	line	64
+   459                           ;digital_voltage_interrupt.c: 64: _delay((unsigned long)((100)*(500000/4000.0)));
+   460                           	opt asmopt_off
+   461  07EA  3011               movlw	17
+   462  07EB  00F1               movwf	((??_loop+0)+0+1),f
+   463  07EC  303A               	movlw	58
+   464  07ED  00F0               movwf	((??_loop+0)+0),f
+   465  07EE                     u2187:
+   466  07EE  0BF0               	decfsz	((??_loop+0)+0),f
+   467  07EF  2FEE               	goto	u2187
+   468  07F0  0BF1               	decfsz	((??_loop+0)+0+1),f
+   469  07F1  2FEE               	goto	u2187
+   470  07F2  0064               	clrwdt
+   471                           opt asmopt_on
+   472                           
+   473                           	line	67
+   474                           	
+   475  07F3                     l3487:	
+   476                           ;digital_voltage_interrupt.c: 67: RA4 = 0;
+   477  07F3  0020               	movlb 0	; select bank0
+   478  07F4  120C               	bcf	(100/8),(100)&7
+   479                           	line	68
+   480                           	
+   481  07F5                     l3489:	
+   482                           ;digital_voltage_interrupt.c: 68: RA5 = 1;
+   483  07F5  168C               	bsf	(101/8),(101)&7
+   484                           	line	69
+   485                           ;digital_voltage_interrupt.c: 69: _delay((unsigned long)((100)*(500000/4000.0)));
+   486                           	opt asmopt_off
+   487  07F6  3011               movlw	17
+   488  07F7  00F1               movwf	((??_loop+0)+0+1),f
+   489  07F8  303A               	movlw	58
+   490  07F9  00F0               movwf	((??_loop+0)+0),f
+   491  07FA                     u2197:
+   492  07FA  0BF0               	decfsz	((??_loop+0)+0),f
+   493  07FB  2FFA               	goto	u2197
+   494  07FC  0BF1               	decfsz	((??_loop+0)+0+1),f
+   495  07FD  2FFA               	goto	u2197
+   496  07FE  0064               	clrwdt
+   497                           opt asmopt_on
+   498                           
+   499                           	line	74
+   500                           	
+   501  07FF                     l1156:	
+   502  07FF  0008               	return
+   503                           	opt stack 0
+   504                           GLOBAL	__end_of_loop
+   505  0800                     	__end_of_loop:
+   506 ;; =============== function _loop ends ============
+   507                           
+   508                           	signat	_loop,88
+   509                           psect	text78,local,class=CODE,delta=2
+   510                           global __ptext78
+   511  0000                     __ptext78:
+   512                           	global	btemp
+   513  007E                     	btemp set 07Eh
+   514                           
+   515                           	DABS	1,126,2	;btemp
+   516                           	global	wtemp0
+   517  007E                     	wtemp0 set btemp
+
+
+HI-TECH Software PICC Macro Assembler V9.83 build 10920 
+Symbol Table                                                                                   Tue May 28 10:58:25 2013
+
+                  _RD 0CA8                    _WR 0CA9                   _GIE 005F                   _RA2 0062  
+                 _RA4 0064                   _RA5 0065                  l1150 07CC                  l1151 07CD  
+                l1152 07CE                  l1153 07CE                  l1147 07C1                  l1156 07FF  
+                l1148 07C6                  l1149 07C2                  l3481 07DD                  l3483 07E7  
+                l3475 07CF                  l3491 07B9                  l3485 07E9                  l3477 07D2  
+                l3493 07BB                  l3487 07F3                  l3479 07DB                  l3495 07BE  
+                l3489 07F5                  l3497 07C2                  l3499 07C6                  u2150 07CB  
+                u2151 07CA                  u2167 07D6                  u2177 07E2                  u2187 07EE  
+                u2197 07FA                  _WREN 0CAA                  _main 07B9                  _loop 07CF  
+                btemp 007E                  start 0001                 ?_main 0070                 _EEADR 0191  
+               ?_loop 0070                 _CARRY 0018                 _PORTA 000C                 _TRISA 008C  
+               wtemp0 007E          __end_of_main 07CF          __end_of_loop 0800                ??_main 0072  
+              ??_loop 0070                _EEDATA 0193                _EECON1 0195                _EECON2 0196  
+              _ANSELA 018C        __pcstackCOMMON 0070            __pmaintext 07B9  end_of_initialization 07B7  
+ start_initialization 07B7              __ptext76 0000              __ptext77 07CF              __ptext78 0000  
+       __size_of_main 0016         __size_of_loop 0031  

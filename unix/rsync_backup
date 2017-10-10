@@ -1,0 +1,3 @@
+incremental backup
+rsync -avz --ignore-existing --recursive --delete /media/Data/FILES/Google\ Drive/ /media/hemma/Coryan/incremental_backup
+

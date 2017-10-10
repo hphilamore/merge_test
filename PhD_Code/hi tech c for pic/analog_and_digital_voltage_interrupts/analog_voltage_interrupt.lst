@@ -1,0 +1,758 @@
+
+
+HI-TECH Software PIC LITE Macro Assembler V9.83 build 10920 
+                                                                                               Wed May 08 15:15:57 2013
+
+HI-TECH Software Omniscient Code Generator (Lite mode) build 10920
+     1  0000                     opt subtitle "HI-TECH Software Omniscient Code Generator (Lite mode) build 10920"
+     2                           
+     3                           opt pagewidth 120
+     4                           
+     5                           	opt lm
+     6                           
+     7                           	processor	12LF1822
+     8                           clrc	macro
+     9                           	bcf	3,0
+    10  0000                     	endm
+    11                           clrz	macro
+    12                           	bcf	3,2
+    13  0000                     	endm
+    14                           setc	macro
+    15                           	bsf	3,0
+    16  0000                     	endm
+    17                           setz	macro
+    18                           	bsf	3,2
+    19  0000                     	endm
+    20                           skipc	macro
+    21                           	btfss	3,0
+    22  0000                     	endm
+    23                           skipz	macro
+    24                           	btfss	3,2
+    25  0000                     	endm
+    26                           skipnc	macro
+    27                           	btfsc	3,0
+    28  0000                     	endm
+    29                           skipnz	macro
+    30                           	btfsc	3,2
+    31  0000                     	endm
+    32  0000                     indf	equ	0
+    33  0000                     indf0	equ	0
+    34  0001                     indf1	equ	1
+    35  0002                     pc	equ	2
+    36  0002                     pcl	equ	2
+    37  0003                     status	equ	3
+    38  0004                     fsr0l	equ	4
+    39  0005                     fsr0h	equ	5
+    40  0006                     fsr1l	equ	6
+    41  0007                     fsr1h	equ	7
+    42  0008                     bsr	equ	8
+    43  0009                     wreg	equ	9
+    44  000B                     intcon	equ	11
+    45  0001                     c	equ	1
+    46  0000                     z	equ	0
+    47  000A                     pclath	equ	10
+    48                           	FNCALL	_main,_loop
+    49                           	FNROOT	_main
+    50                           	global	_addvalueTotal
+    51                           	global	_addvalueTotalL
+    52                           	global	_VddVal
+    53                           	global	_addvalueH
+    54                           	global	_addvalueL
+    55                           	global	_addvalueTotalH
+    56                           	global	_CARRY
+    57                           psect	text100,local,class=CODE,delta=2
+    58                           global __ptext100
+    59  0000                     __ptext100:
+    60  0018                     _CARRY	set	24
+    61                           	global	_GIE
+    62  005F                     _GIE	set	95
+    63                           	global	_RA4
+    64  0064                     _RA4	set	100
+    65                           	global	_RA5
+    66  0065                     _RA5	set	101
+    67                           	global	_ADCON0
+    68  009D                     _ADCON0	set	157
+    69                           	global	_ADCON1
+    70  009E                     _ADCON1	set	158
+    71                           	global	_ADRESH
+    72  009C                     _ADRESH	set	156
+    73                           	global	_ADRESL
+    74  009B                     _ADRESL	set	155
+    75                           	global	_TRISA
+    76  008C                     _TRISA	set	140
+    77                           	global	_ADGO
+    78  04E9                     _ADGO	set	1257
+    79                           	global	_EEADR
+    80  0191                     _EEADR	set	401
+    81                           	global	_ANSELA
+    82  018C                     _ANSELA	set	396
+    83                           	global	_EECON1
+    84  0195                     _EECON1	set	405
+    85                           	global	_EECON2
+    86  0196                     _EECON2	set	406
+    87                           	global	_EEDATA
+    88  0193                     _EEDATA	set	403
+    89                           	global	_RD
+    90  0CA8                     _RD	set	3240
+    91                           	global	_WR
+    92  0CA9                     _WR	set	3241
+    93                           	global	_WREN
+    94  0CAA                     _WREN	set	3242
+    95                           	file	"analog_voltage_interrupt.as"
+    96                           	line	#
+    97                           psect cinit,class=CODE,delta=2
+    98                           global start_initialization
+    99  074B                     start_initialization:
+   100                           
+   101                           psect	bssCOMMON,class=COMMON,space=1
+   102                           global __pbssCOMMON
+   103  0070                     __pbssCOMMON:
+   104  0070                     _VddVal:
+   105  0070                            ds      2
+   106                           
+   107  0072                     _addvalueH:
+   108  0072                            ds      2
+   109                           
+   110  0074                     _addvalueL:
+   111  0074                            ds      2
+   112                           
+   113  0076                     _addvalueTotalH:
+   114  0076                            ds      2
+   115                           
+   116                           psect	bssBANK0,class=BANK0,space=1
+   117                           global __pbssBANK0
+   118  0020                     __pbssBANK0:
+   119  0020                     _addvalueTotal:
+   120  0020                            ds      2
+   121                           
+   122  0022                     _addvalueTotalL:
+   123  0022                            ds      2
+   124                           
+   125                           ; Clear objects allocated to COMMON
+   126                           psect cinit,class=CODE,delta=2
+   127                           	global __pbssCOMMON
+   128  074B  01F0               	clrf	((__pbssCOMMON)+0)&07Fh
+   129  074C  01F1               	clrf	((__pbssCOMMON)+1)&07Fh
+   130  074D  01F2               	clrf	((__pbssCOMMON)+2)&07Fh
+   131  074E  01F3               	clrf	((__pbssCOMMON)+3)&07Fh
+   132  074F  01F4               	clrf	((__pbssCOMMON)+4)&07Fh
+   133  0750  01F5               	clrf	((__pbssCOMMON)+5)&07Fh
+   134  0751  01F6               	clrf	((__pbssCOMMON)+6)&07Fh
+   135  0752  01F7               	clrf	((__pbssCOMMON)+7)&07Fh
+   136                           ; Clear objects allocated to BANK0
+   137                           psect cinit,class=CODE,delta=2
+   138                           	global __pbssBANK0
+   139  0753  01A0               	clrf	((__pbssBANK0)+0)&07Fh
+   140  0754  01A1               	clrf	((__pbssBANK0)+1)&07Fh
+   141  0755  01A2               	clrf	((__pbssBANK0)+2)&07Fh
+   142  0756  01A3               	clrf	((__pbssBANK0)+3)&07Fh
+   143                           psect cinit,class=CODE,delta=2
+   144                           global end_of_initialization
+   145                           
+   146                           ;End of C runtime variable initialization code
+   147                           
+   148  0757                     end_of_initialization:
+   149  0757  0020               movlb 0
+   150  0758  2F9A               ljmp _main	;jump to C main() function
+   151                           psect	cstackCOMMON,class=COMMON,space=1
+   152                           global __pcstackCOMMON
+   153  0078                     __pcstackCOMMON:
+   154                           	global	?_loop
+   155  0078                     ?_loop:	; 0 bytes @ 0x0
+   156                           	global	??_loop
+   157  0078                     ??_loop:	; 0 bytes @ 0x0
+   158                           	global	?_main
+   159  0078                     ?_main:	; 2 bytes @ 0x0
+   160  0078                     	ds	3
+   161                           	global	??_main
+   162  007B                     ??_main:	; 0 bytes @ 0x3
+   163  007B                     	ds	2
+   164 ;;Data sizes: Strings 0, constant 0, data 0, bss 12, persistent 0 stack 0
+   165 ;;Auto spaces:   Size  Autos    Used
+   166 ;; COMMON          14      5      13
+   167 ;; BANK0           80      0       4
+   168 ;; BANK1           21      0       0
+   169                           
+   170 ;;
+   171 ;; Pointer list with targets:
+   172                           
+   173                           
+   174                           
+   175 ;;
+   176 ;; Critical Paths under _main in COMMON
+   177 ;;
+   178 ;;   _main->_loop
+   179 ;;
+   180 ;; Critical Paths under _main in BANK0
+   181 ;;
+   182 ;;   None.
+   183 ;;
+   184 ;; Critical Paths under _main in BANK1
+   185 ;;
+   186 ;;   None.
+   187                           
+   188 ;;
+   189 ;;Main: autosize = 0, tempsize = 2, incstack = 0, save=0
+   190 ;;
+   191                           
+   192 ;;
+   193 ;;Call Graph Tables:
+   194 ;;
+   195 ;; ---------------------------------------------------------------------------------
+   196 ;; (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
+   197 ;; ---------------------------------------------------------------------------------
+   198 ;; (0) _main                                                 2     2      0       0
+   199 ;;                                              3 COMMON     2     2      0
+   200 ;;                               _loop
+   201 ;; ---------------------------------------------------------------------------------
+   202 ;; (1) _loop                                                 3     3      0       0
+   203 ;;                                              0 COMMON     3     3      0
+   204 ;; ---------------------------------------------------------------------------------
+   205 ;; Estimated maximum stack depth 1
+   206 ;; ---------------------------------------------------------------------------------
+   207                           
+   208 ;; Call Graph Graphs:
+   209                           
+   210 ;; _main (ROOT)
+   211 ;;   _loop
+   212 ;;
+   213                           
+   214 ;; Address spaces:
+   215                           
+   216 ;;Name               Size   Autos  Total    Cost      Usage
+   217 ;;BIGRAM              70      0       0       0        0.0%
+   218 ;;EEDATA             100      0       0       0        0.0%
+   219 ;;NULL                 0      0       0       0        0.0%
+   220 ;;CODE                 0      0       0       0        0.0%
+   221 ;;BITCOMMON            E      0       0       1        0.0%
+   222 ;;BITSFR0              0      0       0       1        0.0%
+   223 ;;SFR0                 0      0       0       1        0.0%
+   224 ;;COMMON               E      5       D       2       92.9%
+   225 ;;BITSFR1              0      0       0       2        0.0%
+   226 ;;SFR1                 0      0       0       2        0.0%
+   227 ;;BITSFR2              0      0       0       3        0.0%
+   228 ;;SFR2                 0      0       0       3        0.0%
+   229 ;;STACK                0      0       1       3        0.0%
+   230 ;;BITSFR3              0      0       0       4        0.0%
+   231 ;;SFR3                 0      0       0       4        0.0%
+   232 ;;ABS                  0      0      11       4        0.0%
+   233 ;;BITBANK0            50      0       0       5        0.0%
+   234 ;;BITSFR4              0      0       0       5        0.0%
+   235 ;;SFR4                 0      0       0       5        0.0%
+   236 ;;BANK0               50      0       4       6        5.0%
+   237 ;;BITSFR5              0      0       0       6        0.0%
+   238 ;;SFR5                 0      0       0       6        0.0%
+   239 ;;BITBANK1            15      0       0       7        0.0%
+   240 ;;BITSFR6              0      0       0       7        0.0%
+   241 ;;SFR6                 0      0       0       7        0.0%
+   242 ;;BANK1               15      0       0       8        0.0%
+   243 ;;BITSFR7              0      0       0       8        0.0%
+   244 ;;SFR7                 0      0       0       8        0.0%
+   245 ;;BITSFR8              0      0       0       9        0.0%
+   246 ;;SFR8                 0      0       0       9        0.0%
+   247 ;;DATA                 0      0      12       9        0.0%
+   248 ;;BITSFR9              0      0       0      10        0.0%
+   249 ;;SFR9                 0      0       0      10        0.0%
+   250 ;;BITSFR10             0      0       0      11        0.0%
+   251 ;;SFR10                0      0       0      11        0.0%
+   252 ;;BITSFR11             0      0       0      12        0.0%
+   253 ;;SFR11                0      0       0      12        0.0%
+   254 ;;BITSFR12             0      0       0      13        0.0%
+   255 ;;SFR12                0      0       0      13        0.0%
+   256 ;;BITSFR13             0      0       0      14        0.0%
+   257 ;;SFR13                0      0       0      14        0.0%
+   258 ;;BITSFR14             0      0       0      15        0.0%
+   259 ;;SFR14                0      0       0      15        0.0%
+   260 ;;BITSFR15             0      0       0      16        0.0%
+   261 ;;SFR15                0      0       0      16        0.0%
+   262 ;;BITSFR16             0      0       0      17        0.0%
+   263 ;;SFR16                0      0       0      17        0.0%
+   264 ;;BITSFR17             0      0       0      18        0.0%
+   265 ;;SFR17                0      0       0      18        0.0%
+   266 ;;BITSFR18             0      0       0      19        0.0%
+   267 ;;SFR18                0      0       0      19        0.0%
+   268 ;;BITSFR19             0      0       0      20        0.0%
+   269 ;;SFR19                0      0       0      20        0.0%
+   270 ;;BITSFR20             0      0       0      21        0.0%
+   271 ;;SFR20                0      0       0      21        0.0%
+   272 ;;BITSFR21             0      0       0      22        0.0%
+   273 ;;SFR21                0      0       0      22        0.0%
+   274 ;;BITSFR22             0      0       0      23        0.0%
+   275 ;;SFR22                0      0       0      23        0.0%
+   276 ;;BITSFR23             0      0       0      24        0.0%
+   277 ;;SFR23                0      0       0      24        0.0%
+   278 ;;BITSFR24             0      0       0      25        0.0%
+   279 ;;SFR24                0      0       0      25        0.0%
+   280 ;;BITSFR25             0      0       0      26        0.0%
+   281 ;;SFR25                0      0       0      26        0.0%
+   282 ;;BITSFR26             0      0       0      27        0.0%
+   283 ;;SFR26                0      0       0      27        0.0%
+   284 ;;BITSFR27             0      0       0      28        0.0%
+   285 ;;SFR27                0      0       0      28        0.0%
+   286 ;;BITSFR28             0      0       0      29        0.0%
+   287 ;;SFR28                0      0       0      29        0.0%
+   288 ;;BITSFR29             0      0       0      30        0.0%
+   289 ;;SFR29                0      0       0      30        0.0%
+   290 ;;BITSFR30             0      0       0      31        0.0%
+   291 ;;SFR30                0      0       0      31        0.0%
+   292 ;;BITSFR31             0      0       0      32        0.0%
+   293 ;;SFR31                0      0       0      32        0.0%
+   294                           
+   295                           	global	_main
+   296                           psect	maintext,global,class=CODE,delta=2
+   297                           global __pmaintext
+   298  079A                     __pmaintext:
+   299                           
+   300 ;; *************** function _main *****************
+   301 ;; Defined at:
+   302 ;;		line 25 in file "C:\Users\h-philamore\PhD\Robot brain\IPMC_switch_3\analog_voltage_interrupt.c"
+   303 ;; Parameters:    Size  Location     Type
+   304 ;;		None
+   305 ;; Auto vars:     Size  Location     Type
+   306 ;;		None
+   307 ;; Return value:  Size  Location     Type
+   308 ;;                  2  1158[COMMON] int 
+   309 ;; Registers used:
+   310 ;;		wreg, status,2, status,0, btemp+1, pclath, cstack
+   311 ;; Tracked objects:
+   312 ;;		On entry : 17F/0
+   313 ;;		On exit  : 0/0
+   314 ;;		Unchanged: 0/0
+   315 ;; Data sizes:     COMMON   BANK0   BANK1
+   316 ;;      Params:         0       0       0
+   317 ;;      Locals:         0       0       0
+   318 ;;      Temps:          2       0       0
+   319 ;;      Totals:         2       0       0
+   320 ;;Total ram usage:        2 bytes
+   321 ;; Hardware stack levels required when called:    1
+   322 ;; This function calls:
+   323 ;;		_loop
+   324 ;; This function is called by:
+   325 ;;		Startup code after reset
+   326 ;; This function uses a non-reentrant model
+   327 ;;
+   328                           psect	maintext
+   329                           	file	"C:\Users\h-philamore\PhD\Robot brain\IPMC_switch_3\analog_voltage_interrupt.c"
+   330                           	line	25
+   331                           	global	__size_of_main
+   332  0066                     	__size_of_main	equ	__end_of_main-_main
+   333                           	
+   334  079A                     _main:	
+   335                           	opt	stack 15
+   336                           ; Regs used in _main: [wreg+status,2+status,0+btemp+1+pclath+cstack]
+   337                           	line	31
+   338                           	
+   339  079A                     l3547:	
+   340                           ;analog_voltage_interrupt.c: 31: TRISA = 0b00000000;
+   341  079A  0021               	movlb 1	; select bank1
+   342  079B  018C               	clrf	(140)^080h	;volatile
+   343                           	line	36
+   344                           ;analog_voltage_interrupt.c: 36: ANSELA = 0b0000000;
+   345  079C  0023               	movlb 3	; select bank3
+   346  079D  018C               	clrf	(396)^0180h	;volatile
+   347                           	line	42
+   348                           	
+   349  079E                     l3549:	
+   350                           ;analog_voltage_interrupt.c: 42: ADCON1 = 0b0111000;
+   351  079E  3038               	movlw	(038h)
+   352  079F  0021               	movlb 1	; select bank1
+   353  07A0  009E               	movwf	(158)^080h	;volatile
+   354                           	line	47
+   355                           	
+   356  07A1                     l3551:	
+   357                           ;analog_voltage_interrupt.c: 47: ADCON0= 0b01111101;
+   358  07A1  307D               	movlw	(07Dh)
+   359  07A2  009D               	movwf	(157)^080h	;volatile
+   360                           	line	58
+   361                           	
+   362  07A3                     l3553:	
+   363                           ;analog_voltage_interrupt.c: 58: _delay((unsigned long)((1)*(500000/4000.0)));
+   364                           	opt asmopt_off
+   365  07A3  3029               movlw	41
+   366  07A4  00FB               movwf	(??_main+0)+0,f
+   367  07A5                     u2237:
+   368  07A5  0BFB               decfsz	(??_main+0)+0,f
+   369  07A6  2FA5               	goto	u2237
+   370  07A7  0064               	clrwdt
+   371                           opt asmopt_on
+   372                           
+   373  07A8  2FA9               	goto	l3555
+   374                           	line	63
+   375                           ;analog_voltage_interrupt.c: 63: while (1)
+   376                           	
+   377  07A9                     l1159:	
+   378                           	line	65
+   379                           	
+   380  07A9                     l3555:	
+   381                           ;analog_voltage_interrupt.c: 64: {
+   382                           ;analog_voltage_interrupt.c: 65: ADGO = 1;
+   383  07A9  0021               	movlb 1	; select bank1
+   384  07AA  149D               	bsf	(1257/8)^080h,(1257)&7
+   385                           	line	73
+   386                           ;analog_voltage_interrupt.c: 73: while (ADGO==1);
+   387  07AB  2FAC               	goto	l1160
+   388                           	
+   389  07AC                     l1161:	
+   390                           	
+   391  07AC                     l1160:	
+   392  07AC  189D               	btfsc	(1257/8)^080h,(1257)&7
+   393  07AD  2FAF               	goto	u2191
+   394  07AE  2FB0               	goto	u2190
+   395  07AF                     u2191:
+   396  07AF  2FAC               	goto	l1160
+   397  07B0                     u2190:
+   398  07B0  2FB1               	goto	l3557
+   399                           	
+   400  07B1                     l1162:	
+   401                           	line	81
+   402                           	
+   403  07B1                     l3557:	
+   404                           ;analog_voltage_interrupt.c: 81: addvalueH = ADRESH;
+   405  07B1  081C               	movf	(156)^080h,w	;volatile
+   406  07B2  00FB               	movwf	(??_main+0)+0
+   407  07B3  01FC               	clrf	(??_main+0)+0+1
+   408  07B4  087B               	movf	0+(??_main+0)+0,w
+   409  07B5  00F2               	movwf	(_addvalueH)
+   410  07B6  087C               	movf	1+(??_main+0)+0,w
+   411  07B7  00F3               	movwf	(_addvalueH+1)
+   412                           	line	82
+   413                           ;analog_voltage_interrupt.c: 82: addvalueL = ADRESL;
+   414  07B8  081B               	movf	(155)^080h,w	;volatile
+   415  07B9  00FB               	movwf	(??_main+0)+0
+   416  07BA  01FC               	clrf	(??_main+0)+0+1
+   417  07BB  087B               	movf	0+(??_main+0)+0,w
+   418  07BC  00F4               	movwf	(_addvalueL)
+   419  07BD  087C               	movf	1+(??_main+0)+0,w
+   420  07BE  00F5               	movwf	(_addvalueL+1)
+   421                           	line	87
+   422                           ;analog_voltage_interrupt.c: 87: addvalueTotalH = addvalueH << 2;
+   423  07BF  0873               	movf	(_addvalueH+1),w
+   424  07C0  00FC               	movwf	(??_main+0)+0+1
+   425  07C1  0872               	movf	(_addvalueH),w
+   426  07C2  00FB               	movwf	(??_main+0)+0
+   427  07C3  3002               	movlw	02h
+   428  07C4                     u2205:
+   429  07C4  35FB               	lslf	(??_main+0)+0,f
+   430  07C5  0DFC               	rlf	(??_main+0)+1,f
+   431  07C6  0B89               	decfsz	wreg,f
+   432  07C7  2FC4               	goto	u2205
+   433  07C8  087B               	movf	0+(??_main+0)+0,w
+   434  07C9  00F6               	movwf	(_addvalueTotalH)
+   435  07CA  087C               	movf	1+(??_main+0)+0,w
+   436  07CB  00F7               	movwf	(_addvalueTotalH+1)
+   437                           	line	88
+   438                           	
+   439  07CC                     l3559:	
+   440                           ;analog_voltage_interrupt.c: 88: addvalueTotalL = addvalueL >> 6;
+   441  07CC  0875               	movf	(_addvalueL+1),w
+   442  07CD  00FC               	movwf	(??_main+0)+0+1
+   443  07CE  0874               	movf	(_addvalueL),w
+   444  07CF  00FB               	movwf	(??_main+0)+0
+   445  07D0  3006               	movlw	06h
+   446  07D1  00FF               	movwf	btemp+1
+   447  07D2                     u2215:
+   448  07D2  0D7C               	rlf	(??_main+0)+1,w
+   449  07D3  0CFC               	rrf	(??_main+0)+1,f
+   450  07D4  0CFB               	rrf	(??_main+0)+0,f
+   451  07D5  0BFF               	decfsz	btemp+1,f
+   452  07D6  2FD2               	goto	u2215
+   453  07D7  087B               	movf	0+(??_main+0)+0,w
+   454  07D8  0020               	movlb 0	; select bank0
+   455  07D9  00A2               	movwf	(_addvalueTotalL)
+   456  07DA  087C               	movf	1+(??_main+0)+0,w
+   457  07DB  00A3               	movwf	(_addvalueTotalL+1)
+   458                           	line	93
+   459                           	
+   460  07DC                     l3561:	
+   461                           ;analog_voltage_interrupt.c: 93: addvalueTotal = addvalueTotalH + addvalueTotalL;
+   462  07DC  0822               	movf	(_addvalueTotalL),w
+   463  07DD  0776               	addwf	(_addvalueTotalH),w
+   464  07DE  00A0               	movwf	(_addvalueTotal)
+   465  07DF  0823               	movf	(_addvalueTotalL+1),w
+   466  07E0  3D77               	addwfc	(_addvalueTotalH+1),w
+   467  07E1  00A1               	movwf	1+(_addvalueTotal)
+   468                           	line	97
+   469                           	
+   470  07E2                     l3563:	
+   471                           ;analog_voltage_interrupt.c: 97: VddVal = addvalueTotal*1048576;
+   472  07E2  0821               	movf	(_addvalueTotal+1),w
+   473  07E3  01F1               	clrf	(_VddVal+1)
+   474  07E4  07F1               	addwf	(_VddVal+1)
+   475  07E5  0820               	movf	(_addvalueTotal),w
+   476  07E6  01F0               	clrf	(_VddVal)
+   477  07E7  07F0               	addwf	(_VddVal)
+   478                           
+   479  07E8  2FEF               	goto	l3569
+   480                           	line	101
+   481                           	
+   482  07E9                     l3565:	
+   483  07E9  2FEF               	goto	l3569
+   484                           	
+   485  07EA                     l1163:	
+   486                           	line	103
+   487                           ;analog_voltage_interrupt.c: 102: {
+   488                           ;analog_voltage_interrupt.c: 103: while (VddVal>1800)
+   489  07EA  2FEF               	goto	l3569
+   490                           	
+   491  07EB                     l1165:	
+   492                           	line	105
+   493                           	
+   494  07EB                     l3567:	
+   495                           ;analog_voltage_interrupt.c: 104: {
+   496                           ;analog_voltage_interrupt.c: 105: loop();
+   497  07EB  3187  2759  3187   	fcall	_loop
+   498  07EE  2FEF               	goto	l3569
+   499                           	line	107
+   500                           	
+   501  07EF                     l1164:	
+   502                           	line	103
+   503                           	
+   504  07EF                     l3569:	
+   505  07EF  0871               	movf	(_VddVal+1),w
+   506  07F0  3A80               	xorlw	80h
+   507  07F1  00FF               	movwf	btemp+1
+   508  07F2  3087               	movlw	(high(0709h))^80h
+   509  07F3  027F               	subwf	btemp+1,w
+   510  07F4  1D03               	skipz
+   511  07F5  2FF8               	goto	u2225
+   512  07F6  3009               	movlw	low(0709h)
+   513  07F7  0270               	subwf	(_VddVal),w
+   514  07F8                     u2225:
+   515                           
+   516  07F8  1803               	skipnc
+   517  07F9  2FFB               	goto	u2221
+   518  07FA  2FFC               	goto	u2220
+   519  07FB                     u2221:
+   520  07FB  2FEB               	goto	l3567
+   521  07FC                     u2220:
+   522  07FC  2FA9               	goto	l3555
+   523                           	
+   524  07FD                     l1166:	
+   525  07FD  2FA9               	goto	l3555
+   526                           	line	113
+   527                           	
+   528  07FE                     l1167:	
+   529                           	line	63
+   530  07FE  2FA9               	goto	l3555
+   531                           	
+   532  07FF                     l1168:	
+   533                           	line	114
+   534                           	
+   535  07FF                     l1169:	
+   536                           	global	start
+   537  07FF  2802               	ljmp	start
+   538                           	opt stack 0
+   539                           GLOBAL	__end_of_main
+   540  0800                     	__end_of_main:
+   541 ;; =============== function _main ends ============
+   542                           
+   543                           	signat	_main,90
+   544                           	global	_loop
+   545                           psect	text101,local,class=CODE,delta=2
+   546                           global __ptext101
+   547  0759                     __ptext101:
+   548                           
+   549 ;; *************** function _loop *****************
+   550 ;; Defined at:
+   551 ;;		line 119 in file "C:\Users\h-philamore\PhD\Robot brain\IPMC_switch_3\analog_voltage_interrupt.c"
+   552 ;; Parameters:    Size  Location     Type
+   553 ;;		None
+   554 ;; Auto vars:     Size  Location     Type
+   555 ;;		None
+   556 ;; Return value:  Size  Location     Type
+   557 ;;		None               void
+   558 ;; Registers used:
+   559 ;;		wreg
+   560 ;; Tracked objects:
+   561 ;;		On entry : 0/0
+   562 ;;		On exit  : 0/0
+   563 ;;		Unchanged: 0/0
+   564 ;; Data sizes:     COMMON   BANK0   BANK1
+   565 ;;      Params:         0       0       0
+   566 ;;      Locals:         0       0       0
+   567 ;;      Temps:          3       0       0
+   568 ;;      Totals:         3       0       0
+   569 ;;Total ram usage:        3 bytes
+   570 ;; Hardware stack levels used:    1
+   571 ;; This function calls:
+   572 ;;		Nothing
+   573 ;; This function is called by:
+   574 ;;		_main
+   575 ;; This function uses a non-reentrant model
+   576 ;;
+   577                           psect	text101
+   578                           	file	"C:\Users\h-philamore\PhD\Robot brain\IPMC_switch_3\analog_voltage_interrupt.c"
+   579                           	line	119
+   580                           	global	__size_of_loop
+   581  0041                     	__size_of_loop	equ	__end_of_loop-_loop
+   582                           	
+   583  0759                     _loop:	
+   584                           	opt	stack 15
+   585                           ; Regs used in _loop: [wreg]
+   586                           	line	122
+   587                           	
+   588  0759                     l3531:	
+   589                           ;analog_voltage_interrupt.c: 122: RA4 = 0;
+   590  0759  0020               	movlb 0	; select bank0
+   591  075A  120C               	bcf	(100/8),(100)&7
+   592                           	line	123
+   593                           ;analog_voltage_interrupt.c: 123: RA5 = 0;
+   594  075B  128C               	bcf	(101/8),(101)&7
+   595                           	line	124
+   596                           	
+   597  075C                     l3533:	
+   598                           ;analog_voltage_interrupt.c: 124: _delay((unsigned long)((2000)*(500000/4000.0)));
+   599                           	opt asmopt_off
+   600  075C  3002               movlw  2
+   601  075D  00FA               movwf	((??_loop+0)+0+2),f
+   602  075E  3045               movlw	69
+   603  075F  00F9               movwf	((??_loop+0)+0+1),f
+   604  0760  30A9               	movlw	169
+   605  0761  00F8               movwf	((??_loop+0)+0),f
+   606  0762                     u2247:
+   607  0762  0BF8               	decfsz	((??_loop+0)+0),f
+   608  0763  2F62               	goto	u2247
+   609  0764  0BF9               	decfsz	((??_loop+0)+0+1),f
+   610  0765  2F62               	goto	u2247
+   611  0766  0BFA               	decfsz	((??_loop+0)+0+2),f
+   612  0767  2F62               	goto	u2247
+   613  0768  2F69               	nop2
+   614                           opt asmopt_on
+   615                           
+   616                           	line	126
+   617                           	
+   618  0769                     l3535:	
+   619                           ;analog_voltage_interrupt.c: 126: RA4 = 1;
+   620  0769  0020               	movlb 0	; select bank0
+   621  076A  160C               	bsf	(100/8),(100)&7
+   622                           	line	127
+   623                           	
+   624  076B                     l3537:	
+   625                           ;analog_voltage_interrupt.c: 127: RA5 = 0;
+   626  076B  128C               	bcf	(101/8),(101)&7
+   627                           	line	128
+   628                           ;analog_voltage_interrupt.c: 128: _delay((unsigned long)((2000)*(500000/4000.0)));
+   629                           	opt asmopt_off
+   630  076C  3002               movlw  2
+   631  076D  00FA               movwf	((??_loop+0)+0+2),f
+   632  076E  3045               movlw	69
+   633  076F  00F9               movwf	((??_loop+0)+0+1),f
+   634  0770  30A9               	movlw	169
+   635  0771  00F8               movwf	((??_loop+0)+0),f
+   636  0772                     u2257:
+   637  0772  0BF8               	decfsz	((??_loop+0)+0),f
+   638  0773  2F72               	goto	u2257
+   639  0774  0BF9               	decfsz	((??_loop+0)+0+1),f
+   640  0775  2F72               	goto	u2257
+   641  0776  0BFA               	decfsz	((??_loop+0)+0+2),f
+   642  0777  2F72               	goto	u2257
+   643  0778  2F79               	nop2
+   644                           opt asmopt_on
+   645                           
+   646                           	line	131
+   647                           	
+   648  0779                     l3539:	
+   649                           ;analog_voltage_interrupt.c: 131: RA4 = 0;
+   650  0779  0020               	movlb 0	; select bank0
+   651  077A  120C               	bcf	(100/8),(100)&7
+   652                           	line	132
+   653                           	
+   654  077B                     l3541:	
+   655                           ;analog_voltage_interrupt.c: 132: RA5 = 0;
+   656  077B  128C               	bcf	(101/8),(101)&7
+   657                           	line	133
+   658                           ;analog_voltage_interrupt.c: 133: _delay((unsigned long)((2000)*(500000/4000.0)));
+   659                           	opt asmopt_off
+   660  077C  3002               movlw  2
+   661  077D  00FA               movwf	((??_loop+0)+0+2),f
+   662  077E  3045               movlw	69
+   663  077F  00F9               movwf	((??_loop+0)+0+1),f
+   664  0780  30A9               	movlw	169
+   665  0781  00F8               movwf	((??_loop+0)+0),f
+   666  0782                     u2267:
+   667  0782  0BF8               	decfsz	((??_loop+0)+0),f
+   668  0783  2F82               	goto	u2267
+   669  0784  0BF9               	decfsz	((??_loop+0)+0+1),f
+   670  0785  2F82               	goto	u2267
+   671  0786  0BFA               	decfsz	((??_loop+0)+0+2),f
+   672  0787  2F82               	goto	u2267
+   673  0788  2F89               	nop2
+   674                           opt asmopt_on
+   675                           
+   676                           	line	136
+   677                           	
+   678  0789                     l3543:	
+   679                           ;analog_voltage_interrupt.c: 136: RA4 = 0;
+   680  0789  0020               	movlb 0	; select bank0
+   681  078A  120C               	bcf	(100/8),(100)&7
+   682                           	line	137
+   683                           	
+   684  078B                     l3545:	
+   685                           ;analog_voltage_interrupt.c: 137: RA5 = 1;
+   686  078B  168C               	bsf	(101/8),(101)&7
+   687                           	line	138
+   688                           ;analog_voltage_interrupt.c: 138: _delay((unsigned long)((2000)*(500000/4000.0)));
+   689                           	opt asmopt_off
+   690  078C  3002               movlw  2
+   691  078D  00FA               movwf	((??_loop+0)+0+2),f
+   692  078E  3045               movlw	69
+   693  078F  00F9               movwf	((??_loop+0)+0+1),f
+   694  0790  30A9               	movlw	169
+   695  0791  00F8               movwf	((??_loop+0)+0),f
+   696  0792                     u2277:
+   697  0792  0BF8               	decfsz	((??_loop+0)+0),f
+   698  0793  2F92               	goto	u2277
+   699  0794  0BF9               	decfsz	((??_loop+0)+0+1),f
+   700  0795  2F92               	goto	u2277
+   701  0796  0BFA               	decfsz	((??_loop+0)+0+2),f
+   702  0797  2F92               	goto	u2277
+   703  0798  2F99               	nop2
+   704                           opt asmopt_on
+   705                           
+   706                           	line	140
+   707                           	
+   708  0799                     l1172:	
+   709  0799  0008               	return
+   710                           	opt stack 0
+   711                           GLOBAL	__end_of_loop
+   712  079A                     	__end_of_loop:
+   713 ;; =============== function _loop ends ============
+   714                           
+   715                           	signat	_loop,88
+   716                           psect	text102,local,class=CODE,delta=2
+   717                           global __ptext102
+   718  0000                     __ptext102:
+   719                           	global	btemp
+   720  007E                     	btemp set 07Eh
+   721                           
+   722                           	DABS	1,126,2	;btemp
+   723                           	global	wtemp0
+   724  007E                     	wtemp0 set btemp
+
+
+HI-TECH Software PICC Macro Assembler V9.83 build 10920 
+Symbol Table                                                                                   Wed May 08 15:15:57 2013
+
+                  _RD 0CA8                    _WR 0CA9                   _GIE 005F                   _RA4 0064  
+                 _RA5 0065                   wreg 0009                  l1160 07AC                  l1161 07AC  
+                l1162 07B1                  l1163 07EA                  l1172 0799                  l1164 07EF  
+                l1165 07EB                  l1166 07FD                  l1167 07FE                  l1159 07A9  
+                l1168 07FF                  l1169 07FF                  l3531 0759                  l3541 077B  
+                l3533 075C                  l3543 0789                  l3535 0769                  l3551 07A1  
+                l3545 078B                  l3537 076B                  l3561 07DC                  l3553 07A3  
+                l3539 0779                  l3563 07E2                  l3555 07A9                  l3547 079A  
+                l3565 07E9                  l3557 07B1                  l3549 079E                  l3567 07EB  
+                l3559 07CC                  l3569 07EF                  _ADGO 04E9                  u2220 07FC  
+                u2221 07FB                  u2205 07C4                  u2215 07D2                  u2225 07F8  
+                u2237 07A5                  u2190 07B0                  u2247 0762                  u2191 07AF  
+                u2257 0772                  u2267 0782                  u2277 0792                  _WREN 0CAA  
+                _main 079A                  _loop 0759                  btemp 007E                  start 0002  
+               ?_main 0078                 _EEADR 0191                 ?_loop 0078                 _CARRY 0018  
+               _TRISA 008C                 wtemp0 007E          __end_of_main 0800          __end_of_loop 079A  
+              ??_main 007B                ??_loop 0078                _ADCON0 009D                _ADCON1 009E  
+              _ADRESH 009C                _ADRESL 009B                _EEDATA 0193                _EECON1 0195  
+              _EECON2 0196                _ANSELA 018C                _VddVal 0070        __pcstackCOMMON 0078  
+          __pbssBANK0 0020            __pmaintext 079A         _addvalueTotal 0020  end_of_initialization 0757  
+ start_initialization 074B           __pbssCOMMON 0070             _addvalueH 0072             _addvalueL 0074  
+           __ptext100 0000             __ptext101 0759             __ptext102 0000        _addvalueTotalH 0076  
+      _addvalueTotalL 0022         __size_of_main 0066         __size_of_loop 0041  

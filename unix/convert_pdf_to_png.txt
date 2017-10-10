@@ -1,0 +1,13 @@
+find . -type f -name '*.pdf' -print0 |
+  while IFS= read -r -d '' file
+    do convert -verbose -density 500 -resize 800 "${file}" "${file%.*}.png"
+  done
+That should be able to deal with just about anything you throw at it.
+
+Tricks used:
+
+find ... -print0 : causes find to print its results separated by the null character, let's us deal with newlines.
+IFS= : this will disable word splitting, needed to deal with white space.
+read -r: disables interpreting of backslash escape characters, to deal with files that contain backslashes.
+read -d '': sets the record delimiter to the null character, to deal with find's output and correctly handle file names with newline characters.
+${file%.*}.png : uses the shell's inbuilt string manipulation abilities to remove the extension

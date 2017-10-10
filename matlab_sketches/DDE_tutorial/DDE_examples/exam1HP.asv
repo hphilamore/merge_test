@@ -1,0 +1,167 @@
+function sol = exam1
+% This is example 3 of D.R. Wille' and C.T.H. Baker,
+% DELSOL--a numerical code for the solution of systems
+% of delay-differential equations, Appl. Numer. Math., 
+% 9 (992) 223-234. 
+
+% Copyright 2002, The MathWorks, Inc.
+
+roughness = 0.9;
+e_feed = 5 ;
+steps_s = 7;
+steps_e = 15;
+T_full = steps_e / e_feed;
+
+food_i = 1000
+food_cells_i = 70;
+grid = 900;
+
+%sol = dde23(@exam1f,[1, 0.2],ones(3,1),[0, 5]);
+% sol = dde23(@exam1f,[1: 1: 16],ones(5,1),[0, 5]);
+sol = dde23(@exam1f,[1: 1: 16],[30,0,30,0,1000],[0, 100]);
+figure
+plot(sol.x,sol.y);
+legend('y1','y2','y3','y4','y5');
+title('Example 3 of Wille'' and Baker.')
+xlabel('time t');
+ylabel('y(t)');
+
+%-----------------------------------------------------------------------
+
+function yp = exam1f(t,y,Z)
+%P_leaveSON = 2
+%EXAM1F  The derivative function for the Example 1 of the DDE Tutorial.
+ylag1 = Z(:,1);
+ylag2 = Z(:,2);
+ylag3 = Z(:,3);
+ylag4 = Z(:,4);
+ylag5 = Z(:,5);
+ylag6 = Z(:,6);
+ylag7 = Z(:,7);
+ylag8 = Z(:,8);
+ylag9 = Z(:,9);
+ylag10 = Z(:,10);
+ylag11 = Z(:,11);
+ylag12 = Z(:,12);
+ylag13 = Z(:,13);
+ylag14 = Z(:,14);
+ylag15 = Z(:,15);
+
+
+yp = [ 
+       % y(1) = SON
+       - P_leaveSON(y, t, Z, T_full, food_cells_i, roughness) * y(1)...%TODO roughness for pd and pstay
+        + PfoodWs(y,steps_s,grid) * y(3) ...   
+        + PfoodWeS(y, e_feed, steps_e, grid) * y(4);...   
+       
+       % y(2) = SOFF
+       - PWeSoff(y, steps_s, grid) * y(2) ...% TODO steps_s            
+        + (1 - PWsWe(y, steps_s, steps_s, grid) ...
+           - PWsSon(y, steps_s, grid)) ...
+           * (1 - PfoodWs(y, steps_s, grid)) * y(3) ...          
+        + (1 - PWeWe(y, steps_s, grid) ...
+                - PWeSon(y, steps_e, grid))...
+           * (1 - PfoodWeWe(y, e_feed, grid)... 
+                - PfoodWeS(y, e_feed, steps_e, grid))... 
+           * y(4);
+       
+       % y(3) = Ws
+       - (PfoodWs(y, steps_s, grid)...
+            + PWsWe(y, steps_e, steps_s, grid)...
+            + PWsSon(y, steps_s, grid))...
+            * y(3)...
+        + PWeSoff(y, steps_e, grid) * y(2)... 
+        + Pd(y,food_cells_i,roughness,e_feed,food_i) * y(1);...
+       
+       % y(4) = We 
+       - (1 - PfoodWeWe(y, e_feed, grid)) * y(4)...
+        + P_leaveSON(y, t, Z, T_full, food_cells_i, roughness)
+        - p = Pd(y, food_cells_i,roughness,e_feed,food_i); %TODO define roughness and pstay 
+       
+       % y(5) = food
+       - e_feed * y(1)                ];
+end
+   
+    function fa=a(t);
+        fa=cos(t); % or place whatever you want to place for a(t)..
+    end
+
+    function fb=b(t);
+        fb=sin(t);  % or place whatever you want to place for b(t)..
+    end
+    
+    function fc=c(y);
+        fc=sin(y(2));  % or place whatever you want to place for b(t)..
+    end  
+    
+    function p = P_leaveSON(y, t, Z, T_full, food_cells_i, roughness);    
+    if t >= T_full          
+        p = zeros(1, T_full);
+        for b = linspace(1,T_full,T_full) 
+           p(b) = Pstay(Z(:,b),food_cells_i,roughness,...
+                        e_feed,food_i,steps_s, grid);           
+        end
+        p = 1 - prod(p) + Pd(y, food_cells_i,roughness,e_feed,food_i);
+        
+    else
+        p = Pd(y, food_cells_i,roughness,e_feed,food_i)
+    end
+    end
+   
+    function r = PfoodWs(y, steps_s, grid);
+        p = (y(5)/grid^2);
+        q = (1 - p)^(steps_s - 1);
+        r = p * q * factorial(steps_s)/factorial(steps_s - 1);  
+    end
+
+
+    function r = PfoodWeWe(y, e_feed, grid);
+        p = (y(5)/grid^2);
+        q = (1 - p)^(e_feed - 1);
+        r = p * q * factorial(e_feed)/factorial(e_feed - 1);  
+    end
+    
+    function r = PfoodWeS(y, e_feed, steps_e, grid);
+        p = (y(5)/grid^2);
+        q = (1 - p)^(steps_e - 1);
+        r = p * q * factorial(steps_e)/factorial(steps_e - 1); 
+        r = r - PfoodWeWe(y, e_feed, grid);
+    end
+    
+    function p = PWeSoff(y, steps_e, grid);
+        p = (y(2) * y(4) * steps_e / grid);  
+    end    
+    
+    function p = PWeSon(y, steps_e, grid);
+        p = (y(1) * y(4) * steps_e) / grid;  
+    end
+    
+    function p = PWsWe(y, steps_e, steps_s, grid);
+        p = (y(3) * y(4) * steps_e * steps_s) / grid^2;  
+    end
+    
+    function p = PWeWe(y, steps_e, grid);
+        p = (y(4) * steps_e / grid)^2;  
+    end
+    
+    function p = PWsSon(y, steps_s, grid);
+        p = (y(1) * y(3) * steps_s) / grid;  
+    end
+    
+    function p = Pd(y, food_cells_i,roughness,e_feed,food_i);
+        mean = y(5) / food_cells_i;
+        sd = 1 - (roughness * mean / food_i);
+        p = (1 / (e_feed * sd * sqrt(2*pi)) ...
+            * exp( -(log(e_feed) - mean)^2) / (2 * sd^2));        
+    end
+
+    function p = Pstay(y, food_cells_i,roughness,...
+                       e_feed,food_i,steps_s, grid);
+       
+       big = y
+       p = (PWsSon(y, steps_s, grid) ...
+            + PWeSon(y, steps_e, grid)) ...
+            * (1 - Pd(y, food_cells_i,roughness,e_feed,food_i))
+            
+    end
+end

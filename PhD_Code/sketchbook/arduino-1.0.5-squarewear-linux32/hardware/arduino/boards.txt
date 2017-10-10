@@ -1,0 +1,22 @@
+# See: http://code.google.com/p/arduino/wiki/Platforms
+
+##############################################################
+
+sqw2.name=SquareWear 2.0 (ATmega328 @ 12MHz)
+sqw2.upload.protocol=usbasp
+sqw2.upload.maximum_size=28672
+sqw2.upload.speed=115200
+sqw2.upload.disable_flushing=true
+sqw2.bootloader.low_fuses=0xFF
+sqw2.bootloader.high_fuses=0xD8
+sqw2.bootloader.extended_fuses=0xFF
+sqw2.bootloader.path=none
+sqw2.bootloader.file=none.hex
+sqw2.bootloader.unlock_bits=0x3F
+sqw2.bootloader.lock_bits=0x0F
+sqw2.build.mcu=atmega328p
+sqw2.build.f_cpu=12000000L
+sqw2.build.core=arduino
+sqw2.build.variant=standard
+
+##############################################################

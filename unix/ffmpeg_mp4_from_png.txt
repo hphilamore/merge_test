@@ -1,0 +1,16 @@
+
+# start number specified
+ffmpeg -start_number 837 -i '%3d_1.png' -c:v libx264 out.mp4
+
+# universal file name "img" with unique 3 digit number for each file
+ffmpeg -r 1/5 -i img%03d.png -c:v libx264 -r 30 -pix_fmt yuv420p out.mp4
+
+#chnage frame rate
+ffmpeg -r 1/2 -start_number 0002 -i '%4d.png' -c:v libx264 out_fast.mp4
+
+#use this
+ffmpeg -r 2 -start_number 0002 -i '%4d.png' -c:v libx264 out_fast.mp4
+
+#convert to .avi file
+ffmpeg -i out_fast.mp4 -qscale 0 -vcodec mpeg4 -acodec ac3 out_fast.avi
+
